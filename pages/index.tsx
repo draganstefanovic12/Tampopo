@@ -43,6 +43,7 @@ const Home: NextPage<FetchedMangas> = (props: FetchedMangas) => {
             width={500}
             height={250}
             objectFit="cover"
+            unoptimized
             alt="img"
             loader={() =>
               `https://uploads.mangadex.org/covers/${manga.id}/${filtered.attributes.fileName}.256.jpg`
