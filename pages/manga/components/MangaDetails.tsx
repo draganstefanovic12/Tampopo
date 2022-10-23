@@ -6,6 +6,7 @@ type MangaDetailsProps = {
 };
 
 const MangaDetails = ({ props }: MangaDetailsProps) => {
+  console.log(props);
   const getCover = props.data.relationships
     .filter((findCover) => findCover.type === "cover_art")
     .map((cover) => cover.attributes.fileName);
@@ -15,17 +16,18 @@ const MangaDetails = ({ props }: MangaDetailsProps) => {
   return (
     <div className="px-32 gap-5 flex py-16">
       <Image
-        unoptimized
         src={src}
         alt=""
         objectFit="cover"
-        width={150}
-        height={200}
+        unoptimized
+        width={200}
+        height={300}
         loader={() => src}
         className="rounded"
       />
-      <div>
-        <h1 className="text-white text-3xl font-bold">{props.data.attributes.title.en}</h1>
+      <div className="w-3/4">
+        <h1 className="text-3xl font-bold text-white">{props.data.attributes.title.en}</h1>
+        <p className="text-gray-300">{props.data.attributes.description.en}</p>
       </div>
     </div>
   );
