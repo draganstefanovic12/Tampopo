@@ -5,7 +5,7 @@ import { Manga as MangaInfo, Volumes } from "./types/types";
 import { handleChapterChange, handleMangaChapters, handleMangaInfo } from "../../api/mangadexApi";
 import Head from "next/head";
 import MangaDetails from "./components/MangaDetails";
-import ChapterImages from "../../components/ChapterImages/ChapterImages";
+import ChapterImages from "./components/ChapterImages";
 import ChapterSelection from "./components/ChapterSelection";
 
 //Fetched chapter ids
