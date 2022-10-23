@@ -1,61 +1,21 @@
-import type { NextPage } from "next";
 import Head from "next/head";
 import Hero from "../components/Hero/Hero";
 import styles from "../styles/Home.module.css";
-import axios from "axios";
-import Image from "next/image";
-
-type Manga = {
-  id: string;
-  relationships: Relationship[];
-  attributes: {
-    title: {
-      en: string;
-    };
-  };
-};
-
-type Relationship = {
-  type: string;
-  attributes: {
-    fileName: string;
-  };
-};
+import MangasSection from "../components/MangasSection/MangasSection";
+import type { NextPage } from "next";
+import { Manga } from "./manga/types/types";
+import { handleRecentlyUpdated, handleTopRated } from "../api/mangadexApi";
 
 type FetchedMangas = {
-  data: Manga[];
+  topRated: {
+    data: Manga[];
+  };
+  newReleases: {
+    data: Manga[];
+  };
 };
 
 const Home: NextPage<FetchedMangas> = (props: FetchedMangas) => {
-  //maps through props
-  const mangasWithCover = props.data.map((manga: Manga, i) =>
-    manga.relationships
-      //filters covers to include cover_art
-      .filter((cover) => cover.type === "cover_art")
-      //then maps through everything to have "filtered" to use as image fileName source
-      .map((filtered) => (
-        <li
-          className={`h-44 w-72  rounded shadow p-1 cursor-pointer hover:bg-slate-200 transition-colors`}
-          key={i}
-        >
-          <Image
-            src={`https://uploads.mangadex.org/covers/${manga.id}/${filtered.attributes.fileName}.256.jpg`}
-            width={500}
-            height={250}
-            objectFit="cover"
-            unoptimized
-            alt="img"
-            loader={() =>
-              `https://uploads.mangadex.org/covers/${manga.id}/${filtered.attributes.fileName}.256.jpg`
-            }
-          />
-          <h1 className="text-white whitespace-nowrap overflow-ellipsis overflow-hidden">
-            {manga.attributes.title.en}
-          </h1>
-        </li>
-      ))
-  );
-
   return (
     <div className={styles.container}>
       <Head>
@@ -64,18 +24,21 @@ const Home: NextPage<FetchedMangas> = (props: FetchedMangas) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Hero />
-      <ul className="flex flex-wrap gap-5 mt-5 ml-1.5">{mangasWithCover}</ul>
+      <MangasSection props={props.topRated.data} />
+      <MangasSection props={props.newReleases.data} />
     </div>
   );
 };
 
-export const getStaticProps = async () => {
-  const link =
-    "https://api.mangadex.org/manga?includedTagsMode=AND&excludedTagsMode=OR&contentRating%5B%5D=safe&limit=12&contentRating%5B%5D=suggestive&order%5Brating%5D=desc&includes%5B%5D=manga&includes%5B%5D=cover_art&excludedOriginalLanguage%5B%5D=ko&excludedTags%5B%5D=5920b825-4181-4a17-beeb-9918b0ff7a30&excludedTags%5B%5D=b13b2a48-c720-44a9-9c77-39c9979373fb";
-  const response = await axios.get(link);
+export const getServerSideProps = async () => {
+  const topRated = await handleTopRated();
+  const recentlyUpdated = await handleRecentlyUpdated();
 
   return {
-    props: response.data,
+    props: {
+      topRated: topRated,
+      newReleases: recentlyUpdated,
+    },
   };
 };
 
