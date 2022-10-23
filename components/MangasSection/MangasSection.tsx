@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Manga } from "../../pages";
+import { Manga } from "../../pages/manga/types/types";
 
 type MangaSectionProps = {
   props: Manga[];
@@ -15,15 +15,15 @@ const MangasSection = ({ props }: MangaSectionProps) => {
       //then maps through everything to have "filtered" to use as image fileName source
       .map((filtered) => (
         <li
-          className={`h-44 w-72  rounded shadow-lg p-1 cursor-pointer bg-primary hover:bg-[#373845] transition-colors`}
+          className={`h-80 w-52  rounded shadow-lg p-1 cursor-pointer bg-primary hover:bg-[#373845] transition-colors`}
           key={i}
         >
           <Link href={`/manga/${manga.id}`}>
             <div>
               <Image
                 src={`https://uploads.mangadex.org/covers/${manga.id}/${filtered.attributes.fileName}.256.jpg`}
-                width={500}
-                height={250}
+                width={400}
+                height={550}
                 objectFit="cover"
                 unoptimized
                 alt="img"

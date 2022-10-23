@@ -1,27 +1,10 @@
-import type { NextPage } from "next";
 import Head from "next/head";
 import Hero from "../components/Hero/Hero";
 import styles from "../styles/Home.module.css";
-import axios from "axios";
 import MangasSection from "../components/MangasSection/MangasSection";
-import { topRated, recentlyUpdated } from "../assets/links";
-
-export type Manga = {
-  id: string;
-  relationships: Relationship[];
-  attributes: {
-    title: {
-      en: string;
-    };
-  };
-};
-
-type Relationship = {
-  type: string;
-  attributes: {
-    fileName: string;
-  };
-};
+import type { NextPage } from "next";
+import { Manga } from "./manga/types/types";
+import { handleRecentlyUpdated, handleTopRated } from "../api/mangadexApi";
 
 type FetchedMangas = {
   topRated: {
@@ -47,17 +30,14 @@ const Home: NextPage<FetchedMangas> = (props: FetchedMangas) => {
   );
 };
 
-export const getStaticProps = async () => {
-  const link = topRated;
-  const tpRated = await axios.get(link);
-
-  const link2 = recentlyUpdated;
-  const newReleases = await axios.get(link2);
+export const getServerSideProps = async () => {
+  const topRated = await handleTopRated();
+  const recentlyUpdated = await handleRecentlyUpdated();
 
   return {
     props: {
-      topRated: tpRated.data,
-      newReleases: newReleases.data,
+      topRated: topRated,
+      newReleases: recentlyUpdated,
     },
   };
 };
