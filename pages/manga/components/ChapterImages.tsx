@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { ChapterImages as ChapterImg } from "../../pages/manga/types/types";
+import { ChapterImages as ChapterImg } from "../types/types";
 
 type ChapterImagesProps = ChapterImg;
 
