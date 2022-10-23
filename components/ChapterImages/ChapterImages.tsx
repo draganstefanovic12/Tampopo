@@ -12,7 +12,7 @@ const ChapterImages = ({ chapter }: ChapterImagesProps) => {
           key={imgSource}
           src={`https://uploads.mangadex.org/data/${chapter.hash}/${imgSource}`}
           objectFit="cover"
-          alt="img"
+          alt="manga-panel"
           width={1000}
           height={1500}
         />
