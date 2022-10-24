@@ -3,10 +3,8 @@ import Hero from "../components/Hero/Hero";
 import styles from "../styles/Home.module.css";
 import MangasSection from "../components/MangasSection/MangasSection";
 import type { NextPage } from "next";
-import { GraphQLManga, Manga } from "./manga/types/types";
+import { GraphQLManga } from "./manga/types/types";
 import { handleFetchManga } from "../api/anilistApi";
-import { useEffect } from "react";
-import { handleMangaInfo } from "../api/mangadexApi";
 
 type FetchedMangas = {
   graphQL: {

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { MangaChapter } from "../[name]";
+import { MangaChapter } from "../[name]/[id]";
 
 type MangaDetailsProps = {
   props: MangaChapter;

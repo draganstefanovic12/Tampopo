@@ -5,7 +5,9 @@ const mangadexApi = axios.create({
 });
 
 export const handleMangaInfo = async (query: string) => {
-  const res = await mangadexApi.get("/manga", { params: { title: query } });
+  const res = await mangadexApi.get("/manga", {
+    params: { title: query, order: { rating: "desc" } },
+  });
   return res.data;
 };
 

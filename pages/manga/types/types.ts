@@ -2,6 +2,9 @@ export type Manga = {
   id: string;
   relationships: Relationship[];
   attributes: {
+    links: {
+      al: string;
+    };
     description: {
       en: string;
     };

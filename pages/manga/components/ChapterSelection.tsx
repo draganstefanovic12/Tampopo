@@ -1,4 +1,4 @@
-import { MangaChapter } from "../[name]";
+import { MangaChapter } from "../[name]/[id]";
 import { ChangeEvent, Dispatch, SetStateAction } from "react";
 
 type ChapterSelectionProps = {

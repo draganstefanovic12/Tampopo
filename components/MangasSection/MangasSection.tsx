@@ -15,7 +15,7 @@ const MangasSection = ({ props }: MangaSectionProps) => {
             className="h-80 w-52  rounded shadow-lg p-1 cursor-pointer bg-primary hover:bg-[#373845] transition-colors"
             key={manga.id}
           >
-            <Link href={`/manga/${manga.title?.romaji}`}>
+            <Link href={`/manga/${manga.title?.romaji}/${manga.id}`}>
               <div>
                 <Image
                   src={manga.coverImage?.large!}
