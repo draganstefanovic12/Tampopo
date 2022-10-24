@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const anilistApi = axios.create({
-  baseURL: "https://graphql.anilist.co/",
+  baseURL: "https://graphql.anilist.co",
 });
 
 export const getAccessToken = async (code: string) => {
@@ -19,6 +19,24 @@ export const getAccessToken = async (code: string) => {
     },
   });
   return accessToken.data;
+};
+
+export const handleFetchCurrentUser = async (token: string) => {
+  const query = `
+  query {
+    viewer {
+      id
+      name
+    }
+  }
+  `;
+  const res = await anilistApi.post("/", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    query: query,
+  });
+  return res.data;
 };
 
 export const handleFetchManga = async () => {
@@ -48,7 +66,7 @@ export const handleFetchManga = async () => {
   }
 }
 `;
-  const res = await anilistApi.post("", {
+  const res = await anilistApi.post("/", {
     query: query,
     variables: {
       page: 1,
