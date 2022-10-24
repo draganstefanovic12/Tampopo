@@ -1,5 +1,5 @@
 import Head from "next/head";
-import Hero from "../components/Hero/Hero";
+import Hero from "../components/Hero";
 import styles from "../styles/Home.module.css";
 import MangasSection from "../components/MangasSection/MangasSection";
 import type { NextPage } from "next";
@@ -31,11 +31,11 @@ const Home: NextPage<FetchedMangas> = (props: FetchedMangas) => {
 };
 
 export const getServerSideProps = async () => {
-  const graphQL = await handleFetchManga();
+  const mangas = await handleFetchManga();
 
   return {
     props: {
-      manga: graphQL,
+      manga: mangas,
     },
   };
 };

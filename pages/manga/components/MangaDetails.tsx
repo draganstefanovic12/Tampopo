@@ -2,14 +2,14 @@ import Image from "next/image";
 import { MangaChapter } from "../[name]/[id]";
 
 type MangaDetailsProps = {
-  props: MangaChapter;
+  props: any;
 };
 
 const MangaDetails = ({ props }: MangaDetailsProps) => {
   console.log(props);
   const getCover = props.data.relationships
-    .filter((findCover) => findCover.type === "cover_art")
-    .map((cover) => cover.attributes.fileName);
+    .filter((findCover: any) => findCover.type === "cover_art")
+    .map((cover: any) => cover.attributes.fileName);
 
   const src = `https://uploads.mangadex.org/covers/${props.data.id}/${getCover}.256.jpg`;
 

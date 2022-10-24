@@ -26,7 +26,7 @@ export type GraphQLManga = {
   };
 };
 
-type Relationship = {
+export type Relationship = {
   type: string;
   attributes: {
     fileName: string;

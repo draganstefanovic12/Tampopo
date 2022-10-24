@@ -1,8 +1,14 @@
 import create from "zustand";
 import { User } from "../user/types/types";
 
-export const useUserStore = create((set) => ({
+type UserState = {
+  user: User;
+  handleLoginUser: (user: User) => void;
+  handleLogoutUser: () => void;
+};
+
+export const useUserStore = create<UserState>()((set) => ({
   user: null,
-  handleLogInUser: (user: User) => set(() => ({ user: user })),
+  handleLoginUser: (user: User) => set(() => ({ user: user })),
   handleLogoutUser: () => set(() => ({ user: null })),
 }));

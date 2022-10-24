@@ -27,6 +27,9 @@ export const handleFetchCurrentUser = async (token: string) => {
     Viewer {
       id
       name
+      avatar {
+        medium
+      }
     }
   }
   `;
@@ -41,36 +44,6 @@ export const handleFetchCurrentUser = async (token: string) => {
   });
 
   //fetching current viewer name and id to use them as params for all user info
-  const user = await handleFetchUserInfo(res.data.data.Viewer, token);
-  return user;
-};
-
-export const handleFetchUserInfo = async (viewer: { id: number; name: string }, token: string) => {
-  const query = `
-  query($id: Int, $name: String) {
-    User(id: $id, name: $name) {
-      name
-      avatar {
-        medium
-      }
-    }
-  }
-  `;
-  const variables = {
-    id: viewer.id,
-    name: viewer.name,
-  };
-
-  const res = await anilistApi("/", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    data: {
-      variables: variables,
-      query: query,
-    },
-  });
   return res.data;
 };
 
@@ -101,7 +74,7 @@ export const handleFetchManga = async () => {
     query: query,
     variables: {
       page: 1,
-      perPage: 25,
+      perPage: 10,
     },
   });
   return res.data;

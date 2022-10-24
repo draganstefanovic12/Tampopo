@@ -4,16 +4,16 @@ import { handleFetchCurrentUser } from "../../../api/anilistApi";
 const useLogin = () => {
   const { handleLoginUser } = useUserStore() as any;
 
-  const loginUser = async () => {
-    const auth = JSON.parse(localStorage.getItem("manilist")!);
+  const handleLogin = async () => {
+    const auth = JSON.parse(localStorage.getItem("list_auth")!);
     if (auth) {
       const usr = await handleFetchCurrentUser(auth.access_token);
-      handleLoginUser(usr.data);
+      usr && handleLoginUser(usr.data.Viewer);
+      console.log(usr);
     }
   };
-  loginUser();
 
-  return { loginUser };
+  return { handleLogin };
 };
 
 export default useLogin;
