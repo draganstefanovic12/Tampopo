@@ -4,6 +4,23 @@ const anilistApi = axios.create({
   baseURL: "https://graphql.anilist.co/",
 });
 
+export const getAccessToken = async (code: string) => {
+  const accessToken = await axios.post("https://anilist.co/api/v2/oauth/token", {
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    json: {
+      grant_type: process.env.grantType,
+      client_id: process.env.clientId,
+      client_secret: process.env.clientSecret,
+      redirect_uri: process.env.redirectURI,
+      code: code,
+    },
+  });
+  return accessToken.data;
+};
+
 export const handleFetchManga = async () => {
   //query for getting mangas on search
   const query = `
