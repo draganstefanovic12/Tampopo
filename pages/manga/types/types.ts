@@ -11,6 +11,18 @@ export type Manga = {
   };
 };
 
+export type GraphQLManga = {
+  coverImage?: {
+    extraLarge: string;
+    large: string;
+    medium: string;
+  };
+  id?: number;
+  title?: {
+    romaji: string;
+  };
+};
+
 type Relationship = {
   type: string;
   attributes: {

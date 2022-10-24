@@ -3,8 +3,6 @@ import { useState } from "react";
 import { GetStaticPropsContext, NextPage } from "next";
 import { Manga as MangaInfo, Volumes } from "./types/types";
 import { handleChapterChange, handleMangaChapters, handleMangaInfo } from "../../api/mangadexApi";
-import Head from "next/head";
-import MangaDetails from "./components/MangaDetails";
 import ChapterImages from "./components/ChapterImages";
 import ChapterSelection from "./components/ChapterSelection";
 
@@ -13,7 +11,7 @@ type ChapterId = {
   id: string;
 };
 
-export type MangaChapter = { data: MangaInfo } & { chapters: ChapterId[] };
+export type MangaChapter = { chapters: ChapterId[] };
 
 const Manga: NextPage<MangaChapter> = (props: MangaChapter) => {
   const [chapterId, setChapterId] = useState<string | undefined>();
@@ -27,10 +25,6 @@ const Manga: NextPage<MangaChapter> = (props: MangaChapter) => {
 
   return (
     <section className="flex flex-col">
-      <Head>
-        <title>{props.data.attributes.title.en}</title>
-      </Head>
-      <MangaDetails props={props} />
       <ChapterSelection props={props} setChapterId={setChapterId} />
       {data && <ChapterImages chapter={data.chapter} />}
     </section>
@@ -38,10 +32,10 @@ const Manga: NextPage<MangaChapter> = (props: MangaChapter) => {
 };
 
 export const getServerSideProps = async (context: GetStaticPropsContext) => {
-  const id = context.params?.id as string;
+  const name = context.params?.name as string;
 
-  const handleInfo = await handleMangaInfo(id);
-  const handleChapters = await handleMangaChapters(id);
+  const handleManga = await handleMangaInfo(name);
+  const handleChapters = await handleMangaChapters(handleManga.data[0].id);
 
   //loops through object keys of volumes
   const volumes = Object.keys(handleChapters.volumes).map((key: string) => {
@@ -62,7 +56,7 @@ export const getServerSideProps = async (context: GetStaticPropsContext) => {
   const chapters = ([] as MangaInfo[]).concat.apply([], handleVolumes);
 
   return {
-    props: { ...handleInfo, chapters: chapters },
+    props: { chapters: chapters },
   };
 };
 

@@ -3,15 +3,18 @@ import Hero from "../components/Hero/Hero";
 import styles from "../styles/Home.module.css";
 import MangasSection from "../components/MangasSection/MangasSection";
 import type { NextPage } from "next";
-import { Manga } from "./manga/types/types";
-import { handleRecentlyUpdated, handleTopRated } from "../api/mangadexApi";
+import { GraphQLManga, Manga } from "./manga/types/types";
+import { handleFetchManga } from "../api/anilistApi";
+import { useEffect } from "react";
+import { handleMangaInfo } from "../api/mangadexApi";
 
 type FetchedMangas = {
-  topRated: {
-    data: Manga[];
-  };
-  newReleases: {
-    data: Manga[];
+  graphQL: {
+    data: {
+      Page: {
+        media: GraphQLManga[];
+      };
+    };
   };
 };
 
@@ -24,20 +27,17 @@ const Home: NextPage<FetchedMangas> = (props: FetchedMangas) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Hero />
-      <MangasSection props={props.topRated.data} />
-      <MangasSection props={props.newReleases.data} />
+      <MangasSection props={props.graphQL.data.Page.media} />
     </div>
   );
 };
 
 export const getServerSideProps = async () => {
-  const topRated = await handleTopRated();
-  const recentlyUpdated = await handleRecentlyUpdated();
+  const graphQL = await handleFetchManga();
 
   return {
     props: {
-      topRated: topRated,
-      newReleases: recentlyUpdated,
+      graphQL: graphQL,
     },
   };
 };
