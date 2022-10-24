@@ -1,8 +1,8 @@
 import create from "zustand";
+import { User } from "../user/types/types";
 
 export const useUserStore = create((set) => ({
   user: null,
-  //type out user when i figure out this auth thing
-  handleLogInUser: (user: any) => set(() => ({ user: user })),
+  handleLogInUser: (user: User) => set(() => ({ user: user })),
   handleLogoutUser: () => set(() => ({ user: null })),
 }));
