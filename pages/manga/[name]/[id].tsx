@@ -9,7 +9,6 @@ import {
 } from "../../../api/mangadexApi";
 import ChapterImages from "../components/ChapterImages";
 import ChapterSelection from "../components/ChapterSelection";
-import Head from "next/head";
 
 //Fetched chapter ids
 type ChapterId = {

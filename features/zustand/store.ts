@@ -9,6 +9,9 @@ type UserState = {
 
 export const useUserStore = create<UserState>()((set) => ({
   user: null,
-  handleLoginUser: (user: User) => set(() => ({ user: user })),
+  handleLoginUser: (user: User) => {
+    set(() => ({ user: user }));
+    localStorage.setItem("manilistUser", JSON.stringify(user));
+  },
   handleLogoutUser: () => set(() => ({ user: null })),
 }));

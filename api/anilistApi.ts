@@ -74,7 +74,7 @@ export const handleFetchManga = async () => {
     query: query,
     variables: {
       page: 1,
-      perPage: 10,
+      perPage: 100,
     },
   });
   return res.data;
