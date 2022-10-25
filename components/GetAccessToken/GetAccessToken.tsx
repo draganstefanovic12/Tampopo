@@ -17,7 +17,11 @@ const GetAccessToken = () => {
 
   const aniListLink = `https://anilist.co/api/v2/oauth/authorize?client_id=${process.env.clientId}&redirect_uri=${process.env.redirectURI}&response_type=code`;
 
-  return <a href={aniListLink}>Login with AniList</a>;
+  return (
+    <a className="text-black" href={aniListLink}>
+      Login with AniList
+    </a>
+  );
 };
 
 export default GetAccessToken;

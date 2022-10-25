@@ -57,8 +57,11 @@ export const getServerSideProps = async (context: GetStaticPropsContext) => {
   //maps through volumes array
   const handleVolumes: MangaInfo[][] = volumes.map((volumes: Volumes) => {
     //maps through object keys of all chapters to return chapters array
-    return Object.keys(volumes.chapters).map((chapter) => volumes.chapters[chapter]);
+    return Object.keys(volumes.chapters)
+      .map((chapter) => volumes.chapters[chapter])
+      .filter((chapter) => !chapter.chapter.includes("."));
   });
+  //filters out specials or bonus chapters
 
   //end result is an array of arrays of objects which I can concat + apply into a single array to send back to get the total amount of chapters
   const chapters = handleVolumes.flat();
