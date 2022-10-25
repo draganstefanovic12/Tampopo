@@ -24,6 +24,7 @@ export type GraphQLManga = {
   title?: {
     romaji: string;
   };
+  progress?: string;
 };
 
 export type Relationship = {

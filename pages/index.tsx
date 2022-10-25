@@ -4,6 +4,7 @@ import styles from "../styles/Home.module.css";
 import MangasSection from "../components/MangasSection/MangasSection";
 import type { NextPage } from "next";
 import { GraphQLManga } from "./manga/types/types";
+import { useUserStore } from "../features/zustand/store";
 import { handleFetchManga } from "../api/anilistApi";
 
 type FetchedMangas = {
@@ -17,6 +18,8 @@ type FetchedMangas = {
 };
 
 const Home: NextPage<FetchedMangas> = (props: FetchedMangas) => {
+  const { user } = useUserStore();
+
   return (
     <div className={styles.container}>
       <Head>
@@ -25,6 +28,7 @@ const Home: NextPage<FetchedMangas> = (props: FetchedMangas) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Hero />
+      <MangasSection props={user!.list} />
       <MangasSection props={props.manga.data.Page.media} />
     </div>
   );

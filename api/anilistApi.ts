@@ -1,4 +1,5 @@
 import axios from "axios";
+import { GraphQLManga } from "../pages/manga/types/types";
 
 const anilistApi = axios.create({
   baseURL: "https://graphql.anilist.co",
@@ -67,8 +68,15 @@ export const handleFetchCurrentUser = async (token: string) => {
 
   //fetching current viewer name and id to use them as params for all user info
   const user = await handleFetchCurrentReadingMangas(res.data.data.Viewer.id, token);
+
+  const mangas = user.data.Page.mediaList.map(
+    (manga: { media: GraphQLManga; progress: string }) => {
+      return { ...manga.media, progress: manga.progress };
+    }
+  );
+
   return {
-    list: user.data.Page.mediaList,
+    list: mangas,
     id: res.data.data.Viewer.id,
     name: res.data.data.Viewer.name,
     avatar: res.data.data.Viewer.avatar.medium,
