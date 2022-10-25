@@ -18,7 +18,11 @@ const ChapterSelection = ({ props, setChapterId }: ChapterSelectionProps) => {
   };
 
   return (
-    <select className="fixed bottom-5 right-5 w-20 rounded" onChange={handleChangeChapter}>
+    <select
+      className="fixed bottom-5 right-5 w-20 rounded child:text-black text-black"
+      onChange={handleChangeChapter}
+    >
+      <option disabled>Select a chapter</option>
       {options}
     </select>
   );

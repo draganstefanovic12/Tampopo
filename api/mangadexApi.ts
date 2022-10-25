@@ -18,7 +18,7 @@ export const handleMangaChapters = async (id: string) => {
 };
 
 //fetches chapter images
-export const handleChapterChange = async (id = "1") => {
+export const handleChapterChange = async (id: string) => {
   const res = await mangadexApi.get(`/at-home/server/${id}`);
   return res.data;
 };
