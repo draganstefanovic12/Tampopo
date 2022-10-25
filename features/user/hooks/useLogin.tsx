@@ -1,5 +1,5 @@
 import { useUserStore } from "../../zustand/store";
-import { handleFetchCurrentUser } from "../../../api/anilistApi";
+import { handleFetchCurrentUser, refreshAccessToken } from "../../../api/anilistApi";
 
 const useLogin = () => {
   const { handleLoginUser } = useUserStore() as any;
@@ -10,6 +10,7 @@ const useLogin = () => {
 
     if (user) {
       handleLoginUser(user);
+      handleRefreshUserData();
     }
   };
 
@@ -18,8 +19,10 @@ const useLogin = () => {
     const auth = JSON.parse(localStorage.getItem("list_auth")!);
 
     if (auth) {
-      const usr = await handleFetchCurrentUser(auth.access_token);
-      // usr && handleLoginUser(usr.data.Viewer);
+      // const newToken = (await refreshAccessToken(auth.refresh_token)) as any;
+      // localStorage.setItem("list_auth", JSON.stringify(newToken));
+      const user = await handleFetchCurrentUser(auth.access_token);
+      user && handleLoginUser(user);
     }
   };
 

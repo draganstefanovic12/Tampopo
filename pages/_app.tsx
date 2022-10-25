@@ -10,8 +10,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   const { handleLogin } = useLogin();
 
   useEffect(() => {
-    const user = handleLogin();
-    console.log(user);
+    handleLogin();
   }, []);
 
   return (

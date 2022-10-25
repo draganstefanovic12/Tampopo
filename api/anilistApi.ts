@@ -5,20 +5,42 @@ const anilistApi = axios.create({
 });
 
 export const getAccessToken = async (code: string) => {
-  const accessToken = await axios.post("https://anilist.co/api/v2/oauth/token", {
+  const accessToken = await axios("https://anilist.co/api/v2/oauth/token", {
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
       Accept: "application/json",
     },
-    json: {
-      grant_type: process.env.grantType,
-      client_id: process.env.clientId,
-      client_secret: process.env.clientSecret,
-      redirect_uri: process.env.redirectURI,
-      code: code,
+    data: {
+      json: {
+        grant_type: process.env.grantType,
+        client_id: process.env.clientId,
+        client_secret: process.env.clientSecret,
+        redirect_uri: process.env.redirectURI,
+        code: code,
+      },
     },
   });
   return accessToken.data;
+};
+
+export const refreshAccessToken = async (code: string) => {
+  const accessToken = await axios("https://anilist.co/api/v2/oauth/token", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    data: {
+      json: {
+        grant_type: "refresh_token",
+        client_id: process.env.clientId,
+        client_secret: process.env.clientSecret,
+        refresh_token: code,
+      },
+    },
+  });
+  return accessToken;
 };
 
 export const handleFetchCurrentUser = async (token: string) => {
@@ -44,6 +66,53 @@ export const handleFetchCurrentUser = async (token: string) => {
   });
 
   //fetching current viewer name and id to use them as params for all user info
+  const user = await handleFetchCurrentReadingMangas(res.data.data.Viewer.id, token);
+  return {
+    list: user.data.Page.mediaList,
+    id: res.data.data.Viewer.id,
+    name: res.data.data.Viewer.name,
+    avatar: res.data.data.Viewer.avatar.medium,
+  };
+};
+
+export const handleFetchCurrentReadingMangas = async (id: string, token: string) => {
+  const query = `
+  query($userId:Int,$type:MediaType,$perPage:Int){
+    Page(perPage:$perPage){
+      mediaList(userId:$userId,type:$type,status_in:[CURRENT,REPEATING],sort:UPDATED_TIME_DESC){
+        id
+        status
+        score
+        progress
+        progressVolumes
+        media {
+          id
+          title {
+            romaji
+          }
+          coverImage {
+            large
+          }
+          }
+        }
+      }
+    }
+  `;
+  const variables = {
+    userId: id,
+    type: "MANGA",
+    perPage: 100,
+  };
+  const res = await anilistApi("/", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    data: {
+      query: query,
+      variables: variables,
+    },
+  });
   return res.data;
 };
 
@@ -65,7 +134,6 @@ export const handleFetchManga = async () => {
       romaji
       }
     type
-    genres
     }
   }
 }
