@@ -1,5 +1,5 @@
 import { useUserStore } from "../../zustand/store";
-import { handleFetchCurrentUser, refreshAccessToken } from "../../../api/anilistApi";
+import { handleFetchCurrentUser } from "../../../api/anilistApi";
 
 const useLogin = () => {
   const { handleLoginUser } = useUserStore() as any;

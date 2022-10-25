@@ -47,7 +47,7 @@ export const getServerSideProps = async (context: GetStaticPropsContext) => {
   );
 
   //fetches all volumes and chapters from mangadex
-  const handleChapters = await handleMangaChapters(findAnilistApi[0].id);
+  const handleChapters = await handleMangaChapters(findAnilistApi[0] && findAnilistApi[0].id);
 
   //loops through object keys of volumes and returns them in an array
   const volumes = Object.keys(handleChapters.volumes).map((key: string) => {

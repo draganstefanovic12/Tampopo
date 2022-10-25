@@ -8,4 +8,9 @@ body {
   --btn-color: #3c4a86;
   --font-main: #ffffff;
   --font-secondary: #636363;
+  color: #ffffff;
+}
+
+.main-shadow {
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.08);
 }

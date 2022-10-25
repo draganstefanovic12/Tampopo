@@ -69,6 +69,7 @@ export const handleFetchCurrentUser = async (token: string) => {
   //fetching current viewer name and id to use them as params for all user info
   const user = await handleFetchCurrentReadingMangas(res.data.data.Viewer.id, token);
 
+  //puts everything in a single array of objects to return to show on screen using MangaSection component
   const mangas = user.data.Page.mediaList.map(
     (manga: { media: GraphQLManga; progress: string }) => {
       return { ...manga.media, progress: manga.progress };
@@ -133,7 +134,7 @@ export const handleFetchManga = async () => {
         total
         perPage
       }
-    media(type: MANGA, sort: FAVOURITES_DESC) {
+    media(type: MANGA, sort: SCORE_DESC) {
       id
       coverImage {
         large
