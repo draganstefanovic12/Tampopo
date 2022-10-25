@@ -2,6 +2,9 @@ export type Manga = {
   id: string;
   relationships: Relationship[];
   attributes: {
+    links: {
+      al: string;
+    };
     description: {
       en: string;
     };
@@ -11,7 +14,20 @@ export type Manga = {
   };
 };
 
-type Relationship = {
+export type AnilistManga = {
+  coverImage?: {
+    extraLarge: string;
+    large: string;
+    medium: string;
+  };
+  id?: number;
+  title?: {
+    romaji: string;
+  };
+  progress?: string;
+};
+
+export type Relationship = {
   type: string;
   attributes: {
     fileName: string;

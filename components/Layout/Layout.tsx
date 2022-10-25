@@ -1,4 +1,4 @@
-import Nav from "../Nav/Nav";
+import Nav from "../Nav";
 
 type LayoutProps = {
   children: JSX.Element;

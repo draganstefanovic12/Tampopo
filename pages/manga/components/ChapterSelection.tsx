@@ -1,4 +1,4 @@
-import { MangaChapter } from "../[id]";
+import { MangaChapter } from "../[name]/[id]";
 import { ChangeEvent, Dispatch, SetStateAction } from "react";
 
 type ChapterSelectionProps = {
@@ -18,7 +18,11 @@ const ChapterSelection = ({ props, setChapterId }: ChapterSelectionProps) => {
   };
 
   return (
-    <select className="fixed bottom-5 right-5 w-20 rounded" onChange={handleChangeChapter}>
+    <select
+      className="fixed bottom-5 right-5 w-20 rounded child:text-black text-black"
+      onChange={handleChangeChapter}
+    >
+      <option disabled>Select a chapter</option>
       {options}
     </select>
   );

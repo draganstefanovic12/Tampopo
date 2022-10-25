@@ -1,21 +1,25 @@
 import Head from "next/head";
-import Hero from "../components/Hero/Hero";
+import Hero from "../components/Hero";
 import styles from "../styles/Home.module.css";
 import MangasSection from "../components/MangasSection/MangasSection";
 import type { NextPage } from "next";
-import { Manga } from "./manga/types/types";
-import { handleRecentlyUpdated, handleTopRated } from "../api/mangadexApi";
+import { AnilistManga } from "./manga/types/types";
+import { useUserStore } from "../features/zustand/store";
+import { handleFetchManga } from "../api/anilistApi";
 
 type FetchedMangas = {
-  topRated: {
-    data: Manga[];
-  };
-  newReleases: {
-    data: Manga[];
+  manga: {
+    data: {
+      Page: {
+        media: AnilistManga[];
+      };
+    };
   };
 };
 
 const Home: NextPage<FetchedMangas> = (props: FetchedMangas) => {
+  const { user } = useUserStore();
+
   return (
     <div className={styles.container}>
       <Head>
@@ -24,20 +28,18 @@ const Home: NextPage<FetchedMangas> = (props: FetchedMangas) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Hero />
-      <MangasSection props={props.topRated.data} />
-      <MangasSection props={props.newReleases.data} />
+      {user?.list && <MangasSection props={user!.list} header="Currently reading" />}
+      <MangasSection props={props.manga.data.Page.media} header="Top rated" />
     </div>
   );
 };
 
 export const getServerSideProps = async () => {
-  const topRated = await handleTopRated();
-  const recentlyUpdated = await handleRecentlyUpdated();
+  const mangas = await handleFetchManga();
 
   return {
     props: {
-      topRated: topRated,
-      newReleases: recentlyUpdated,
+      manga: mangas,
     },
   };
 };
