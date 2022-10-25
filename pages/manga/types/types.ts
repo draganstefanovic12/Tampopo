@@ -14,7 +14,7 @@ export type Manga = {
   };
 };
 
-export type GraphQLManga = {
+export type AnilistManga = {
   coverImage?: {
     extraLarge: string;
     large: string;

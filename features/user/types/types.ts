@@ -1,9 +1,9 @@
-import { GraphQLManga } from "../../../pages/manga/types/types";
+import { AnilistManga } from "../../../pages/manga/types/types";
 
 export type User = {
   name: string;
   avatar: {
     medium: string;
   };
-  list: GraphQLManga[];
+  list: AnilistManga[];
 } | null;

@@ -3,7 +3,7 @@ import Hero from "../components/Hero";
 import styles from "../styles/Home.module.css";
 import MangasSection from "../components/MangasSection/MangasSection";
 import type { NextPage } from "next";
-import { GraphQLManga } from "./manga/types/types";
+import { AnilistManga } from "./manga/types/types";
 import { useUserStore } from "../features/zustand/store";
 import { handleFetchManga } from "../api/anilistApi";
 
@@ -11,7 +11,7 @@ type FetchedMangas = {
   manga: {
     data: {
       Page: {
-        media: GraphQLManga[];
+        media: AnilistManga[];
       };
     };
   };

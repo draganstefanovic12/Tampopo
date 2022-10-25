@@ -1,5 +1,5 @@
 import axios from "axios";
-import { GraphQLManga } from "../pages/manga/types/types";
+import { AnilistManga } from "../pages/manga/types/types";
 
 const anilistApi = axios.create({
   baseURL: "https://graphql.anilist.co",
@@ -71,7 +71,7 @@ export const handleFetchCurrentUser = async (token: string) => {
 
   //puts everything in a single array of objects to return to show on screen using MangaSection component
   const mangas = user.data.Page.mediaList.map(
-    (manga: { media: GraphQLManga; progress: string }) => {
+    (manga: { media: AnilistManga; progress: string }) => {
       return { ...manga.media, progress: manga.progress };
     }
   );

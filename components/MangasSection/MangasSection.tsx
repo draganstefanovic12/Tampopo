@@ -1,9 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
-import { GraphQLManga } from "../../pages/manga/types/types";
+import { AnilistManga } from "../../pages/manga/types/types";
 
 type MangaSectionProps = {
-  props: GraphQLManga[];
+  props: AnilistManga[];
   header?: string;
 };
 
