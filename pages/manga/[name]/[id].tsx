@@ -1,15 +1,18 @@
 import { useQuery } from "react-query";
-import { useState } from "react";
-import { GetStaticPropsContext, NextPage } from "next";
+import { useRouter } from "next/router";
+import { useUserStore } from "../../../features/zustand/store";
+import { useEffect, useState } from "react";
+import { handleFetchSingleManga } from "../../../api/anilistApi";
 import { Manga as MangaInfo, Volumes } from "../types/types";
+import { GetStaticPropsContext, NextPage } from "next";
 import {
   handleChapterChange,
   handleMangaChapters,
   handleMangaInfo,
 } from "../../../api/mangadexApi";
+
 import ChapterImages from "../components/ChapterImages";
 import ChapterSelection from "../components/ChapterSelection";
-import { useRouter } from "next/router";
 
 //Fetched chapter ids
 type ChapterId = {
@@ -20,10 +23,13 @@ export type MangaChapter = { chapters: ChapterId[] };
 
 const Manga: NextPage<MangaChapter> = (props: MangaChapter) => {
   const { query } = useRouter();
-  const { data: mangaInfo } = useQuery(["mangaInfo"], () => {
-    return; //func from anilist api that fetches media info -->
-  });
+  const { user } = useUserStore();
   const [chapterId, setChapterId] = useState<string | undefined>();
+
+  const { data: mangaInfo } = useQuery(["mangaInfo"], () => {
+    return handleFetchSingleManga(query.id as string);
+  });
+
   const { data } = useQuery(
     ["chapter", chapterId],
     () => {
@@ -32,8 +38,19 @@ const Manga: NextPage<MangaChapter> = (props: MangaChapter) => {
     { enabled: !!chapterId }
   );
 
+  useEffect(() => {
+    //sets the manga to current read chapter
+    const CHECK_PROGRESS = user?.list.current.find(
+      (mangas) => mangas.title?.romaji === query.name
+    )?.progress;
+    CHECK_PROGRESS &&
+      Number(CHECK_PROGRESS) < props.chapters.length &&
+      setChapterId(props.chapters[Number(CHECK_PROGRESS)].id);
+  }, []);
+
   return (
     <section className="flex flex-col">
+      {mangaInfo && <img className="h-1/4 " src={mangaInfo.data.Page.media[0].bannerImage} />}
       <ChapterSelection props={props} setChapterId={setChapterId} />
       {data && <ChapterImages chapter={data.chapter} />}
     </section>

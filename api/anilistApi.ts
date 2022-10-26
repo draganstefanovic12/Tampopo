@@ -1,5 +1,5 @@
 import axios from "axios";
-import { AnilistManga, FetchedAnilistManga } from "../pages/manga/types/types";
+import { FetchedAnilistManga } from "../pages/manga/types/types";
 
 const anilistApi = axios.create({
   baseURL: "https://graphql.anilist.co",
@@ -128,6 +128,41 @@ export const handleFetchCurrentReadingMangas = async (id: string, token: string)
       query: query,
       variables: variables,
     },
+  });
+  return res.data;
+};
+
+export const handleFetchSingleManga = async (id: string) => {
+  const query = `
+  query ($page: Int, $perPage: Int, $id: Int) {
+    Page(page: $page, perPage: $perPage) {
+      pageInfo {
+        total
+        perPage
+      }
+    media(type: MANGA, id: $id) {
+      bannerImage
+      coverImage {
+        large
+      }
+      title {
+      romaji
+      }
+    type
+    }
+  }
+}
+  `;
+
+  const variables = {
+    id: id,
+    perPage: 1,
+    page: 1,
+  };
+
+  const res = await anilistApi.post("/", {
+    query: query,
+    variables: variables,
   });
   return res.data;
 };
