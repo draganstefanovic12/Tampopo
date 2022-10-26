@@ -28,7 +28,8 @@ const Home: NextPage<FetchedMangas> = (props: FetchedMangas) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Hero />
-      {user?.list && <MangasSection props={user!.list} header="Currently reading" />}
+      {user?.list && <MangasSection props={user!.list.current} header="Currently reading" />}
+      {user?.list && <MangasSection props={user!.list.planning} header="Planning to read" />}
       <MangasSection props={props.manga.data.Page.media} header="Top rated" />
     </div>
   );

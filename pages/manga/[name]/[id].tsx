@@ -9,6 +9,7 @@ import {
 } from "../../../api/mangadexApi";
 import ChapterImages from "../components/ChapterImages";
 import ChapterSelection from "../components/ChapterSelection";
+import { useRouter } from "next/router";
 
 //Fetched chapter ids
 type ChapterId = {
@@ -18,6 +19,10 @@ type ChapterId = {
 export type MangaChapter = { chapters: ChapterId[] };
 
 const Manga: NextPage<MangaChapter> = (props: MangaChapter) => {
+  const { query } = useRouter();
+  const { data: mangaInfo } = useQuery(["mangaInfo"], () => {
+    return; //func from anilist api that fetches media info -->
+  });
   const [chapterId, setChapterId] = useState<string | undefined>();
   const { data } = useQuery(
     ["chapter", chapterId],
