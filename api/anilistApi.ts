@@ -98,21 +98,19 @@ export const handleFetchCurrentReadingMangas = async (id: string, token: string)
       mediaList(userId:$userId,type:$type,status_in:[CURRENT,REPEATING, PLANNING],sort:UPDATED_TIME_DESC){
         id
         status
-        score
         progress
-        progressVolumes
         media {
           id
           title {
             romaji
-          }
+            }
           coverImage {
             large
-          }
           }
         }
       }
     }
+  }
   `;
   const variables = {
     userId: id,
@@ -129,6 +127,7 @@ export const handleFetchCurrentReadingMangas = async (id: string, token: string)
       variables: variables,
     },
   });
+  console.log(res.data);
   return res.data;
 };
 

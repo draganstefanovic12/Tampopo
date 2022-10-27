@@ -27,6 +27,7 @@ export type AnilistManga = {
   progress?: string;
 };
 
+//this is filtered out array of chapters that i send back to [id] page
 export type FetchedAnilistManga = {
   media: AnilistManga;
   progress: string;
