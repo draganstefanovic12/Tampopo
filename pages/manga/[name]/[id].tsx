@@ -24,9 +24,8 @@ export type Chapter = {
 };
 
 const Manga: NextPage<MangaChapter> = (props: MangaChapter) => {
-  const { query } = useRouter();
   const { user } = useUserStore();
-  const { auth } = useLocalStorage();
+  const { query } = useRouter();
   const [chapter, setChapter] = useState<Chapter | undefined>();
 
   //fetches manga banner and basic info from ANILIST API
@@ -43,15 +42,15 @@ const Manga: NextPage<MangaChapter> = (props: MangaChapter) => {
     { enabled: !!chapter, refetchInterval: Infinity }
   );
 
+  const CURRENT = user?.list.current.find((manga) => manga.title?.romaji === query.name)!;
+
   useEffect(() => {
-    //sets the manga to current read chapter
+    //sets the manga to current read chapter or the first one
     const checkUserProgress = () => {
-      const CHECK_PROGRESS = user?.list.current.find(
-        (mangas) => mangas.title?.romaji === query.name
-      )?.progress;
-      CHECK_PROGRESS &&
-        Number(CHECK_PROGRESS) < props.chapters.length &&
-        setChapter(props.chapters[Number(CHECK_PROGRESS)]);
+      CURRENT
+        ? Number(CURRENT.progress) < props.chapters.length &&
+          setChapter(props.chapters[Number(CURRENT.progress)])
+        : setChapter(props.chapters[0]);
     };
 
     user && checkUserProgress();
@@ -60,15 +59,22 @@ const Manga: NextPage<MangaChapter> = (props: MangaChapter) => {
   useEffect(() => {
     const onScroll = async () => {
       if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
-        const CURRENT = user?.list.current.find((manga) => manga.title?.romaji === query.name)!;
-        if (Number(chapter?.chapter) > Number(CURRENT.progress!)) {
+        const auth = JSON.parse(localStorage.getItem("list_auth")!);
+        if (CURRENT && Number(chapter?.chapter) > Number(CURRENT.progress!)) {
+          console.log("test");
           const check = await handleUpdateChapter(CURRENT.id, chapter?.chapter, auth.access_token);
+          console.log(check);
         }
       }
+
+      return () => {
+        onScroll();
+      };
     };
+
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [chapter]);
 
   return (
     <section className="flex flex-col">

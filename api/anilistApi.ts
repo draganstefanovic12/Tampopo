@@ -174,16 +174,16 @@ export const handleUpdateChapter = async (
   token: string
 ) => {
   const query = `
-  mutation($mediaId: Int, $progress: Int) {
-    SaveMediaListEntry(mediaId: $mediaId, progress: $progress) {
+  mutation($mediaId: Int, $status: MediaListStatus, $progress: Int) {
+    SaveMediaListEntry(mediaId: $mediaId, status: $status, progress: $progress) {
       id
-      status
+      progress
     }
   }
   `;
 
   const variables = {
-    id: id,
+    mediaId: id,
     progress: progress,
   };
 
