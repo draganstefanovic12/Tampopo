@@ -3,12 +3,9 @@ import Hero from "../components/Hero";
 import styles from "../styles/Home.module.css";
 import MangasSection from "../components/MangasSection/MangasSection";
 import type { NextPage } from "next";
-import { AnilistManga } from "./manga/types/types";
-import { useUserStore } from "../features/zustand/store";
-import { handleFetchCurrentUser, handleFetchManga } from "../api/anilistApi";
-import { useQuery } from "react-query";
-import useAuth from "../features/user/hooks/useAuth";
-import { useEffect } from "react";
+import { useUser } from "../features/user/context/UserContext";
+import { AnilistManga } from "../features/manga/types/types";
+import { handleFetchManga } from "../api/anilistApi";
 
 type FetchedMangas = {
   manga: {
@@ -21,19 +18,7 @@ type FetchedMangas = {
 };
 
 const Home: NextPage<FetchedMangas> = (props: FetchedMangas) => {
-  const { auth } = useAuth();
-  const { handleLoginUser } = useUserStore();
-  const { data: user } = useQuery(
-    ["user"],
-    () => {
-      return handleFetchCurrentUser(auth);
-    },
-    { enabled: !!auth }
-  );
-
-  useEffect(() => {
-    user && handleLoginUser(user);
-  }, [user]);
+  const { user } = useUser();
 
   return (
     <div className={styles.container}>

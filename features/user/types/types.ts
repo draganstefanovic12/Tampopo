@@ -1,4 +1,4 @@
-import { AnilistManga } from "../../../pages/manga/types/types";
+import { AnilistManga } from "../../manga/types/types";
 
 export type User = {
   name: string;

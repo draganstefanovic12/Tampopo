@@ -19,7 +19,6 @@ const MangaDetails = ({ props }: MangaDetailsProps) => {
       <Image
         src={src}
         alt=""
-        objectFit="cover"
         unoptimized
         width={200}
         height={300}

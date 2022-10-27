@@ -1,19 +1,18 @@
+import { useUser } from "../../../features/user/context/UserContext";
 import { useQuery } from "react-query";
 import { useRouter } from "next/router";
-import { useUserStore } from "../../../features/zustand/store";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { handleFetchSingleManga, handleUpdateChapter } from "../../../api/anilistApi";
-import { Manga as MangaInfo, Volumes } from "../types/types";
+import { AnilistManga, Manga as MangaInfo, Volumes } from "../../../features/manga/types/types";
 import { GetStaticPropsContext, NextPage } from "next";
 import {
   handleChapterChange,
   handleMangaChapters,
   handleMangaInfo,
 } from "../../../api/mangadexApi";
-
-import ChapterImages from "../components/ChapterImages";
-import Chapters from "../components/Chapters";
-import PreviousNextChapter from "../components/PreviousNextChapter";
+import Chapters from "../../../features/manga/components/Chapters";
+import ChapterImages from "../../../features/manga/components/ChapterImages";
+import PreviousNextChapter from "../../../features/manga/components/PreviousNextChapter";
 
 export type MangaChapter = { chapters: Chapter[] };
 
@@ -23,14 +22,18 @@ export type Chapter = {
 };
 
 const Manga: NextPage<MangaChapter> = (props: MangaChapter) => {
-  const { user } = useUserStore();
+  const { user } = useUser();
   const { query } = useRouter();
   const [chapter, setChapter] = useState<Chapter | undefined>();
 
   //fetches manga banner and basic info from ANILIST API
-  const { data: mangaInfo } = useQuery(["mangaInfo"], () => {
-    return handleFetchSingleManga(query.id as string);
-  });
+  const { data: mangaInfo } = useQuery(
+    ["mangaInfo"],
+    () => {
+      return handleFetchSingleManga(query.id as string);
+    },
+    { refetchInterval: Infinity }
+  );
 
   //fetches all chapters for the opened manga
   const { data } = useQuery(
@@ -41,7 +44,9 @@ const Manga: NextPage<MangaChapter> = (props: MangaChapter) => {
     { enabled: !!chapter, refetchInterval: Infinity }
   );
 
-  const CURRENT = user?.list.current.find((manga) => manga.title?.romaji === query.name)!;
+  const CURRENT = user?.list.current.find(
+    (manga: AnilistManga) => manga.title?.romaji === query.name
+  )!;
 
   useEffect(() => {
     //sets the manga to current read chapter or the first one
@@ -63,10 +68,6 @@ const Manga: NextPage<MangaChapter> = (props: MangaChapter) => {
           await handleUpdateChapter(CURRENT.id, chapter?.chapter, auth.access_token);
         }
       }
-
-      return () => {
-        onScroll();
-      };
     };
 
     window.addEventListener("scroll", onScroll);
@@ -74,7 +75,7 @@ const Manga: NextPage<MangaChapter> = (props: MangaChapter) => {
   }, [chapter]);
 
   return (
-    <section className="flex flex-col">
+    <section className="flex flex-col items-ce">
       {mangaInfo && (
         <img className="h-[400px] object-cover" src={mangaInfo.data.Page.media[0].bannerImage} />
       )}
@@ -110,8 +111,7 @@ export const getServerSideProps = async (context: GetStaticPropsContext) => {
     return Object.keys(volumes.chapters)
       .map((chapter) => volumes.chapters[chapter])
       .filter((chapter) => !chapter.chapter.includes("."));
-  });
-  //filters out specials or bonus chapters
+  }); //filters out specials or bonus chapters
 
   //end result is an array of arrays of objects which I can concat + apply into a single array to send back to get the total amount of chapters
   const chapters = handleVolumes.flat();

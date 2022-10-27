@@ -1,17 +1,20 @@
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import Layout from "../components/Layout";
+import { UserContextProvider } from "../features/user/context/UserContext";
 import { QueryClient, QueryClientProvider } from "react-query";
 
 function MyApp({ Component, pageProps }: AppProps) {
   const queryClient = new QueryClient();
 
   return (
-    <Layout>
-      <QueryClientProvider client={queryClient}>
-        <Component {...pageProps} />
-      </QueryClientProvider>
-    </Layout>
+    <QueryClientProvider client={queryClient}>
+      <UserContextProvider>
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      </UserContextProvider>
+    </QueryClientProvider>
   );
 }
 

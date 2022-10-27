@@ -1,5 +1,5 @@
-import { Dispatch, RefObject, SetStateAction, useEffect } from "react";
-import { Chapter, MangaChapter } from "../[name]/[id]";
+import { Dispatch, SetStateAction, useEffect } from "react";
+import { MangaChapter, Chapter } from "../../../pages/manga/[name]/[id]";
 
 type PreviousNextProps = {
   props: MangaChapter;
