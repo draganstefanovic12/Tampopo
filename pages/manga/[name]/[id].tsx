@@ -14,7 +14,6 @@ import {
 import ChapterImages from "../components/ChapterImages";
 import Chapters from "../components/Chapters";
 import PreviousNextChapter from "../components/PreviousNextChapter";
-import useLocalStorage from "../../../features/local storage/hooks/useLocalStorage";
 
 export type MangaChapter = { chapters: Chapter[] };
 
@@ -53,17 +52,15 @@ const Manga: NextPage<MangaChapter> = (props: MangaChapter) => {
         : setChapter(props.chapters[0]);
     };
 
-    user && checkUserProgress();
-  }, []);
+    checkUserProgress();
+  }, [user]);
 
   useEffect(() => {
     const onScroll = async () => {
       if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
         const auth = JSON.parse(localStorage.getItem("list_auth")!);
         if (CURRENT && Number(chapter?.chapter) > Number(CURRENT.progress!)) {
-          console.log("test");
-          const check = await handleUpdateChapter(CURRENT.id, chapter?.chapter, auth.access_token);
-          console.log(check);
+          await handleUpdateChapter(CURRENT.id, chapter?.chapter, auth.access_token);
         }
       }
 
