@@ -1,36 +1,86 @@
 import { useQuery } from "react-query";
-import { useState } from "react";
-import { GetStaticPropsContext, NextPage } from "next";
+import { useRouter } from "next/router";
+import { useUserStore } from "../../../features/zustand/store";
+import { useEffect, useRef, useState } from "react";
+import { handleFetchSingleManga, handleUpdateChapter } from "../../../api/anilistApi";
 import { Manga as MangaInfo, Volumes } from "../types/types";
+import { GetStaticPropsContext, NextPage } from "next";
 import {
   handleChapterChange,
   handleMangaChapters,
   handleMangaInfo,
 } from "../../../api/mangadexApi";
-import ChapterImages from "../components/ChapterImages";
-import ChapterSelection from "../components/ChapterSelection";
 
-//Fetched chapter ids
-type ChapterId = {
+import ChapterImages from "../components/ChapterImages";
+import Chapters from "../components/Chapters";
+import PreviousNextChapter from "../components/PreviousNextChapter";
+
+export type MangaChapter = { chapters: Chapter[] };
+
+export type Chapter = {
   id: string;
+  chapter: string;
 };
 
-export type MangaChapter = { chapters: ChapterId[] };
-
 const Manga: NextPage<MangaChapter> = (props: MangaChapter) => {
-  const [chapterId, setChapterId] = useState<string | undefined>();
+  const { user } = useUserStore();
+  const { query } = useRouter();
+  const [chapter, setChapter] = useState<Chapter | undefined>();
+
+  //fetches manga banner and basic info from ANILIST API
+  const { data: mangaInfo } = useQuery(["mangaInfo"], () => {
+    return handleFetchSingleManga(query.id as string);
+  });
+
+  //fetches all chapters for the opened manga
   const { data } = useQuery(
-    ["chapter", chapterId],
+    ["chapter", chapter],
     () => {
-      return handleChapterChange(chapterId!);
+      return handleChapterChange(chapter!.id);
     },
-    { enabled: !!chapterId }
+    { enabled: !!chapter, refetchInterval: Infinity }
   );
+
+  const CURRENT = user?.list.current.find((manga) => manga.title?.romaji === query.name)!;
+
+  useEffect(() => {
+    //sets the manga to current read chapter or the first one
+    const checkUserProgress = () => {
+      CURRENT
+        ? Number(CURRENT.progress) < props.chapters.length &&
+          setChapter(props.chapters[Number(CURRENT.progress)])
+        : setChapter(props.chapters[0]);
+    };
+
+    checkUserProgress();
+  }, [user]);
+
+  useEffect(() => {
+    const onScroll = async () => {
+      if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+        const auth = JSON.parse(localStorage.getItem("list_auth")!);
+        if (CURRENT && Number(chapter?.chapter) > Number(CURRENT.progress!)) {
+          await handleUpdateChapter(CURRENT.id, chapter?.chapter, auth.access_token);
+        }
+      }
+
+      return () => {
+        onScroll();
+      };
+    };
+
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [chapter]);
 
   return (
     <section className="flex flex-col">
-      <ChapterSelection props={props} setChapterId={setChapterId} />
+      {mangaInfo && (
+        <img className="h-[400px] object-cover" src={mangaInfo.data.Page.media[0].bannerImage} />
+      )}
+      <Chapters props={props} setChapter={setChapter} />
       {data && <ChapterImages chapter={data.chapter} />}
+      <PreviousNextChapter props={props} setChapter={setChapter} chapter={chapter} />
     </section>
   );
 };
@@ -42,12 +92,12 @@ export const getServerSideProps = async (context: GetStaticPropsContext) => {
   const handleManga = await handleMangaInfo(name);
 
   //filters the 10 results to find the id matching the anilist manga id
-  const findAnilistApi = handleManga.data.filter(
+  const findAnilistId = handleManga.data.filter(
     (manga: MangaInfo) => manga.attributes.links && manga.attributes.links.al === id
   );
 
   //fetches all volumes and chapters from mangadex
-  const handleChapters = await handleMangaChapters(findAnilistApi[0] && findAnilistApi[0].id);
+  const handleChapters = await handleMangaChapters(findAnilistId[0] && findAnilistId[0].id);
 
   //loops through object keys of volumes and returns them in an array
   const volumes = Object.keys(handleChapters.volumes).map((key: string) => {

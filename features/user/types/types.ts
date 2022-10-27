@@ -5,5 +5,8 @@ export type User = {
   avatar: {
     medium: string;
   };
-  list: AnilistManga[];
+  list: {
+    current: AnilistManga[];
+    planning: AnilistManga[];
+  };
 } | null;

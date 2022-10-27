@@ -1,15 +1,16 @@
 import Image from "next/image";
-import { MangaChapter } from "../[name]/[id]";
+import { Manga, Relationship } from "../types/types";
 
 type MangaDetailsProps = {
-  props: any;
+  props: {
+    data: Manga;
+  };
 };
 
 const MangaDetails = ({ props }: MangaDetailsProps) => {
-  console.log(props);
   const getCover = props.data.relationships
-    .filter((findCover: any) => findCover.type === "cover_art")
-    .map((cover: any) => cover.attributes.fileName);
+    .filter((findCover: Relationship) => findCover.type === "cover_art")
+    .map((cover: Relationship) => cover.attributes.fileName);
 
   const src = `https://uploads.mangadex.org/covers/${props.data.id}/${getCover}.256.jpg`;
 

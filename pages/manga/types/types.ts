@@ -27,6 +27,12 @@ export type AnilistManga = {
   progress?: string;
 };
 
+export type FetchedAnilistManga = {
+  media: AnilistManga;
+  progress: string;
+  status: string;
+};
+
 export type Relationship = {
   type: string;
   attributes: {

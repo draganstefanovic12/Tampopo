@@ -5,7 +5,10 @@ import MangasSection from "../components/MangasSection/MangasSection";
 import type { NextPage } from "next";
 import { AnilistManga } from "./manga/types/types";
 import { useUserStore } from "../features/zustand/store";
-import { handleFetchManga } from "../api/anilistApi";
+import { handleFetchCurrentUser, handleFetchManga } from "../api/anilistApi";
+import { useQuery } from "react-query";
+import useAuth from "../features/user/hooks/useAuth";
+import { useEffect } from "react";
 
 type FetchedMangas = {
   manga: {
@@ -18,7 +21,19 @@ type FetchedMangas = {
 };
 
 const Home: NextPage<FetchedMangas> = (props: FetchedMangas) => {
-  const { user } = useUserStore();
+  const { auth } = useAuth();
+  const { handleLoginUser } = useUserStore();
+  const { data: user } = useQuery(
+    ["user"],
+    () => {
+      return handleFetchCurrentUser(auth);
+    },
+    { enabled: !!auth }
+  );
+
+  useEffect(() => {
+    user && handleLoginUser(user);
+  }, [user]);
 
   return (
     <div className={styles.container}>
@@ -28,7 +43,12 @@ const Home: NextPage<FetchedMangas> = (props: FetchedMangas) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Hero />
-      {user?.list && <MangasSection props={user!.list} header="Currently reading" />}
+      {user && (
+        <>
+          <MangasSection props={user!.list.current} header="Currently reading" />
+          <MangasSection props={user!.list.planning} header="Planning to read" />
+        </>
+      )}
       <MangasSection props={props.manga.data.Page.media} header="Top rated" />
     </div>
   );
