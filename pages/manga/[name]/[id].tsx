@@ -1,8 +1,8 @@
 import { useQuery } from "react-query";
 import { useRouter } from "next/router";
 import { useUserStore } from "../../../features/zustand/store";
-import { useEffect, useState } from "react";
-import { handleFetchSingleManga } from "../../../api/anilistApi";
+import { useEffect, useRef, useState } from "react";
+import { handleFetchSingleManga, handleUpdateChapter } from "../../../api/anilistApi";
 import { Manga as MangaInfo, Volumes } from "../types/types";
 import { GetStaticPropsContext, NextPage } from "next";
 import {
@@ -12,47 +12,72 @@ import {
 } from "../../../api/mangadexApi";
 
 import ChapterImages from "../components/ChapterImages";
-import ChapterSelection from "../components/ChapterSelection";
+import Chapters from "../components/Chapters";
+import PreviousNextChapter from "../components/PreviousNextChapter";
 
-//Fetched chapter ids
-type ChapterId = {
+export type MangaChapter = { chapters: Chapter[] };
+
+export type Chapter = {
   id: string;
+  chapter: string;
 };
-
-export type MangaChapter = { chapters: ChapterId[] };
 
 const Manga: NextPage<MangaChapter> = (props: MangaChapter) => {
   const { query } = useRouter();
   const { user } = useUserStore();
-  const [chapterId, setChapterId] = useState<string | undefined>();
+  const [chapter, setChapter] = useState<Chapter | undefined>();
 
+  //fetches manga banner and basic info from ANILIST API
   const { data: mangaInfo } = useQuery(["mangaInfo"], () => {
     return handleFetchSingleManga(query.id as string);
   });
 
+  //fetches all chapters for the opened manga
   const { data } = useQuery(
-    ["chapter", chapterId],
+    ["chapter", chapter],
     () => {
-      return handleChapterChange(chapterId!);
+      return handleChapterChange(chapter!.id);
     },
-    { enabled: !!chapterId }
+    { enabled: !!chapter, refetchInterval: Infinity }
   );
 
   useEffect(() => {
     //sets the manga to current read chapter
-    const CHECK_PROGRESS = user?.list.current.find(
-      (mangas) => mangas.title?.romaji === query.name
-    )?.progress;
-    CHECK_PROGRESS &&
-      Number(CHECK_PROGRESS) < props.chapters.length &&
-      setChapterId(props.chapters[Number(CHECK_PROGRESS)].id);
+    const checkUserProgress = () => {
+      const CHECK_PROGRESS = user?.list.current.find(
+        (mangas) => mangas.title?.romaji === query.name
+      )?.progress;
+      CHECK_PROGRESS &&
+        Number(CHECK_PROGRESS) < props.chapters.length &&
+        setChapter(props.chapters[Number(CHECK_PROGRESS)]);
+    };
+
+    user && checkUserProgress();
+  }, []);
+
+  useEffect(() => {
+    const onScroll = async () => {
+      if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+        const CURRENT = user?.list.current.find((manga) => manga.title?.romaji === query.name)!;
+        if (Number(chapter?.chapter) > Number(CURRENT.progress!)) {
+          const token = localStorage.getItem("list_auth")! as any;
+          console.log("E?");
+          const check = await handleUpdateChapter(CURRENT.id, chapter?.chapter, token.access_token);
+        }
+      }
+    };
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   return (
     <section className="flex flex-col">
-      {mangaInfo && <img className="h-1/4 " src={mangaInfo.data.Page.media[0].bannerImage} />}
-      <ChapterSelection props={props} setChapterId={setChapterId} />
+      {mangaInfo && (
+        <img className="h-[400px] object-cover" src={mangaInfo.data.Page.media[0].bannerImage} />
+      )}
+      <Chapters props={props} setChapter={setChapter} />
       {data && <ChapterImages chapter={data.chapter} />}
+      <PreviousNextChapter props={props} setChapter={setChapter} chapter={chapter} />
     </section>
   );
 };
@@ -64,12 +89,12 @@ export const getServerSideProps = async (context: GetStaticPropsContext) => {
   const handleManga = await handleMangaInfo(name);
 
   //filters the 10 results to find the id matching the anilist manga id
-  const findAnilistApi = handleManga.data.filter(
+  const findAnilistId = handleManga.data.filter(
     (manga: MangaInfo) => manga.attributes.links && manga.attributes.links.al === id
   );
 
   //fetches all volumes and chapters from mangadex
-  const handleChapters = await handleMangaChapters(findAnilistApi[0] && findAnilistApi[0].id);
+  const handleChapters = await handleMangaChapters(findAnilistId[0] && findAnilistId[0].id);
 
   //loops through object keys of volumes and returns them in an array
   const volumes = Object.keys(handleChapters.volumes).map((key: string) => {

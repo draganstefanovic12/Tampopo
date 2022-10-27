@@ -167,6 +167,39 @@ export const handleFetchSingleManga = async (id: string) => {
   return res.data;
 };
 
+//fix this tmr..
+export const handleUpdateChapter = async (
+  id: number | undefined,
+  progress: string | undefined,
+  token: string
+) => {
+  const query = `
+  mutation($mediaId: Int, $progress: Int) {
+    SaveMediaListEntry(mediaId: $mediaId, progress: $progress) {
+      id
+      status
+    }
+  }
+  `;
+
+  const variables = {
+    id: id,
+    progress: progress,
+  };
+
+  const res = await anilistApi("/", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    method: "POST",
+    data: {
+      query: query,
+      variables: variables,
+    },
+  });
+  return res.data;
+};
+
 export const handleFetchManga = async () => {
   //query for getting mangas on search
   const query = `
