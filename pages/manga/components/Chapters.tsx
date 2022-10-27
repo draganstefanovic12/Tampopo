@@ -1,9 +1,9 @@
-import { MangaChapter } from "../[name]/[id]";
-import { Dispatch, RefObject, SetStateAction } from "react";
+import { Chapter, MangaChapter } from "../[name]/[id]";
+import { Dispatch, SetStateAction } from "react";
 
 type ChapterSelectionProps = {
   props: MangaChapter;
-  setChapter: Dispatch<SetStateAction<any>>;
+  setChapter: Dispatch<SetStateAction<Chapter | undefined>>;
 };
 
 const Chapters = ({ props, setChapter }: ChapterSelectionProps) => {

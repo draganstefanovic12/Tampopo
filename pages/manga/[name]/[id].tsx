@@ -14,6 +14,7 @@ import {
 import ChapterImages from "../components/ChapterImages";
 import Chapters from "../components/Chapters";
 import PreviousNextChapter from "../components/PreviousNextChapter";
+import useLocalStorage from "../../../features/local storage/hooks/useLocalStorage";
 
 export type MangaChapter = { chapters: Chapter[] };
 
@@ -25,6 +26,7 @@ export type Chapter = {
 const Manga: NextPage<MangaChapter> = (props: MangaChapter) => {
   const { query } = useRouter();
   const { user } = useUserStore();
+  const { auth } = useLocalStorage();
   const [chapter, setChapter] = useState<Chapter | undefined>();
 
   //fetches manga banner and basic info from ANILIST API
@@ -60,9 +62,7 @@ const Manga: NextPage<MangaChapter> = (props: MangaChapter) => {
       if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
         const CURRENT = user?.list.current.find((manga) => manga.title?.romaji === query.name)!;
         if (Number(chapter?.chapter) > Number(CURRENT.progress!)) {
-          const token = localStorage.getItem("list_auth")! as any;
-          console.log("E?");
-          const check = await handleUpdateChapter(CURRENT.id, chapter?.chapter, token.access_token);
+          const check = await handleUpdateChapter(CURRENT.id, chapter?.chapter, auth.access_token);
         }
       }
     };

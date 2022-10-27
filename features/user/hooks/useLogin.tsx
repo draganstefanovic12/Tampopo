@@ -2,7 +2,7 @@ import { useUserStore } from "../../zustand/store";
 import { handleFetchCurrentUser } from "../../../api/anilistApi";
 
 const useLogin = () => {
-  const { handleLoginUser } = useUserStore() as any;
+  const { handleLoginUser } = useUserStore();
 
   const handleLogin = async () => {
     //checks if the user info exists in local storage
