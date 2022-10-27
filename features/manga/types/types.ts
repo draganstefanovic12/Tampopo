@@ -54,3 +54,5 @@ export type ChapterImages = {
     data: string[];
   };
 };
+
+export default {};

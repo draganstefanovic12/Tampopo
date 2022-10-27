@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { AnilistManga } from "../../pages/manga/types/types";
+import { AnilistManga } from "../../features/manga/types/types";
 
 type MangaSectionProps = {
   props: AnilistManga[];

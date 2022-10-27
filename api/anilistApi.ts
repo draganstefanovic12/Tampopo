@@ -1,5 +1,5 @@
 import axios from "axios";
-import { FetchedAnilistManga } from "../pages/manga/types/types";
+import { FetchedAnilistManga } from "../features/manga/types/types";
 
 const anilistApi = axios.create({
   baseURL: "https://graphql.anilist.co",
