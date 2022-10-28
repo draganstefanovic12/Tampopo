@@ -38,6 +38,7 @@ const Manga: NextPage<MangaChapter> = (props: MangaChapter) => {
       setUpdatingChapter(true);
     },
     onSuccess: () => {
+      //invalidates user queries on chapter mutation and refetches to keep the status synced
       queryClient.invalidateQueries("user");
 
       setUpdatingChapter(false);
@@ -68,20 +69,26 @@ const Manga: NextPage<MangaChapter> = (props: MangaChapter) => {
       if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
         const auth = JSON.parse(localStorage.getItem("list_auth")!);
 
-        if (Number(chapter?.chapter) > Number(CURRENT_MANGA.progress!)) {
-          const chapterUpdate = {
-            id: CURRENT_MANGA.id,
-            progress: chapter?.chapter,
-            token: auth.access_token,
-          };
+        const chapterUpdate = {
+          id: query.id,
+          progress: chapter?.chapter,
+          token: auth.access_token,
+        };
 
-          //mutates user to refetch user data on chapter update to keep the progress updated
+        //these 2 conditions check if the manga is not read before
+        //and if the last read chapter is ahead of the last current one
+        //second condition is to not update the current manga with the chapters before in case of rereading
+        if (!CURRENT_MANGA && user) {
+          mutateUser.mutate(chapterUpdate);
+        }
+
+        if (CURRENT_MANGA && Number(chapter?.chapter) > Number(CURRENT_MANGA.progress!)) {
           mutateUser.mutate(chapterUpdate);
         }
       }
     };
 
-    CURRENT_MANGA && window.addEventListener("scroll", onScroll);
+    window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, [chapter]);
 

@@ -49,7 +49,6 @@ export const refreshAccessToken = async (code: string) => {
 };
 
 export const handleFetchCurrentUser = async (token: string) => {
-  console.log("HEY");
   const query = `
   query {
     Viewer {
@@ -166,7 +165,7 @@ export const handleFetchSingleManga = async (id: string) => {
 };
 
 type UpdatingChapter = {
-  id: number | undefined;
+  id: string | string[] | undefined;
   progress: string | undefined;
   token: string;
 };
@@ -177,12 +176,14 @@ export const handleUpdateChapter = async (update: UpdatingChapter) => {
     SaveMediaListEntry(mediaId: $mediaId, status: $status, progress: $progress) {
       id
       progress
+      status
     }
   }
   `;
 
   const variables = {
     mediaId: update.id,
+    status: "CURRENT",
     progress: update.progress,
   };
 
