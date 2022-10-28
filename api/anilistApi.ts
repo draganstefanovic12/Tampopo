@@ -6,42 +6,46 @@ const anilistApi = axios.create({
 });
 
 export const getAccessToken = async (code: string) => {
-  const accessToken = await axios("https://anilist.co/api/v2/oauth/token", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
-    data: {
-      json: {
+  try {
+    const accessToken = await axios("https://anilist.co/api/v2/oauth/token", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      data: {
         grant_type: process.env.grantType,
         client_id: process.env.clientId,
         client_secret: process.env.clientSecret,
         redirect_uri: process.env.redirectURI,
         code: code,
       },
-    },
-  });
-  return accessToken.data;
+    });
+    return accessToken.data;
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 export const refreshAccessToken = async (code: string) => {
-  const accessToken = await axios("https://anilist.co/api/v2/oauth/token", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
-    data: {
-      json: {
+  try {
+    const accessToken = await axios("https://anilist.co/api/v2/oauth/token", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      data: {
         grant_type: "refresh_token",
         client_id: process.env.clientId,
         client_secret: process.env.clientSecret,
         refresh_token: code,
       },
-    },
-  });
-  return accessToken;
+    });
+    return accessToken.data;
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 export const handleFetchCurrentUser = async (token: string) => {
@@ -56,7 +60,8 @@ export const handleFetchCurrentUser = async (token: string) => {
     }
   }
   `;
-  const res = await anilistApi("/", {
+
+  const response = await anilistApi("/", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -66,13 +71,11 @@ export const handleFetchCurrentUser = async (token: string) => {
     },
   });
 
-  //fetching current viewer name and id to use them as params for all user info
-  const user = await handleFetchCurrentReadingMangas(res.data.data.Viewer.id, token);
+  //fetching current user name (Viewer) and id to use them as params to get all currently reading mangas
+  const user = await handleFetchCurrentMangas(response.data.data.Viewer.id, token);
 
-  //puts everything in a single array of objects to return to show on screen using MangaSection component
-
+  //function that splits up mangas by status
   const splitMangasByCategory = (status: string) => {
-    //splits the returned mangas into "currently reading" and "planning to read" categories
     return user.data.Page.mediaList
       .filter((manga: FetchedAnilistManga) => manga.status === status)
       .map((manga: FetchedAnilistManga) => {
@@ -85,13 +88,13 @@ export const handleFetchCurrentUser = async (token: string) => {
 
   return {
     list: { current: CURRENT, planning: PLANNING },
-    id: res.data.data.Viewer.id,
-    name: res.data.data.Viewer.name,
-    avatar: res.data.data.Viewer.avatar.medium,
+    id: response.data.data.Viewer.id,
+    name: response.data.data.Viewer.name,
+    avatar: response.data.data.Viewer.avatar.medium,
   };
 };
 
-export const handleFetchCurrentReadingMangas = async (id: string, token: string) => {
+export const handleFetchCurrentMangas = async (id: string, token: string) => {
   const query = `
   query($userId:Int,$type:MediaType,$perPage:Int){
     Page(perPage:$perPage){
@@ -112,12 +115,14 @@ export const handleFetchCurrentReadingMangas = async (id: string, token: string)
     }
   }
   `;
+
   const variables = {
     userId: id,
     type: "MANGA",
     perPage: 100,
   };
-  const res = await anilistApi("/", {
+
+  const response = await anilistApi("/", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -127,8 +132,8 @@ export const handleFetchCurrentReadingMangas = async (id: string, token: string)
       variables: variables,
     },
   });
-  console.log(res.data);
-  return res.data;
+
+  return response.data;
 };
 
 export const handleFetchSingleManga = async (id: string) => {
@@ -141,13 +146,6 @@ export const handleFetchSingleManga = async (id: string) => {
       }
     media(type: MANGA, id: $id) {
       bannerImage
-      coverImage {
-        large
-      }
-      title {
-      romaji
-      }
-    type
     }
   }
 }
@@ -159,11 +157,11 @@ export const handleFetchSingleManga = async (id: string) => {
     page: 1,
   };
 
-  const res = await anilistApi.post("/", {
+  const response = await anilistApi.post("/", {
     query: query,
     variables: variables,
   });
-  return res.data;
+  return response.data;
 };
 
 type UpdatingChapter = {
@@ -187,7 +185,7 @@ export const handleUpdateChapter = async (update: UpdatingChapter) => {
     progress: update.progress,
   };
 
-  const res = await anilistApi("/", {
+  const response = await anilistApi("/", {
     headers: {
       Authorization: `Bearer ${update.token}`,
     },
@@ -197,11 +195,10 @@ export const handleUpdateChapter = async (update: UpdatingChapter) => {
       variables: variables,
     },
   });
-  return res.data;
+  return response.data;
 };
 
-export const handleFetchManga = async () => {
-  //query for getting mangas on search
+export const handleFetchTopRated = async () => {
   const query = `
   query ($page: Int, $perPage: Int) {
     Page(page: $page, perPage: $perPage) {
@@ -222,12 +219,12 @@ export const handleFetchManga = async () => {
   }
 }
 `;
-  const res = await anilistApi.post("/", {
+  const response = await anilistApi.post("/", {
     query: query,
     variables: {
       page: 1,
       perPage: 100,
     },
   });
-  return res.data;
+  return response.data;
 };

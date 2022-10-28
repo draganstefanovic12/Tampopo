@@ -22,9 +22,9 @@ const PreviousNextChapter = ({ props, setChapter, chapter }: PreviousNextProps) 
   const checkIfLastChapter = props.chapters.at(-1)!.chapter === chapter?.chapter ? "hidden" : "";
 
   return (
-    <div className="self-center flex gap-96">
+    <div className="self-center flex gap-[1400px]">
       <button onClick={handlePreviousChapter}>Previous Chapter</button>
-      <button className={`${checkIfLastChapter}`} onClick={handleNextChapter}>
+      <button className={checkIfLastChapter} onClick={handleNextChapter}>
         Next Chapter
       </button>
     </div>

@@ -5,20 +5,20 @@ const mangadexApi = axios.create({
 });
 
 export const handleMangaInfo = async (query: string) => {
-  const res = await mangadexApi.get("/manga", {
-    params: { title: query, order: { rating: "desc" }, limit: 20 },
+  const response = await mangadexApi.get("/manga", {
+    params: { title: query, order: { rating: "desc" }, limit: 50 },
   });
-  return res.data;
+  return response.data;
 };
 
 //fetches manga volumes and chapters
 export const handleMangaChapters = async (id: string) => {
-  const res = await mangadexApi.get(`/manga/${id}/aggregate?translatedLanguage%5B%5D=en`);
-  return res.data;
+  const response = await mangadexApi.get(`/manga/${id}/aggregate?translatedLanguage%5B%5D=en`);
+  return response.data;
 };
 
 //fetches chapter images
 export const handleChapterChange = async (id: string) => {
-  const res = await mangadexApi.get(`/at-home/server/${id}`);
-  return res.data;
+  const response = await mangadexApi.get(`/at-home/server/${id}`);
+  return response.data;
 };
