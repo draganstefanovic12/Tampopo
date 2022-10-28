@@ -6,7 +6,6 @@ import type { NextPage } from "next";
 import { useUser } from "../features/user/context/UserContext";
 import { AnilistManga } from "../features/manga/types/types";
 import { handleFetchTopRated } from "../api/anilistApi";
-import { useEffect } from "react";
 
 type FetchedMangas = {
   manga: {

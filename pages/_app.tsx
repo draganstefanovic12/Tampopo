@@ -4,9 +4,8 @@ import { UserContextProvider } from "../features/user/context/UserContext";
 import { QueryClient, QueryClientProvider } from "react-query";
 import Layout from "../components/Layout";
 
+const queryClient = new QueryClient();
 function MyApp({ Component, pageProps }: AppProps) {
-  const queryClient = new QueryClient();
-
   return (
     <QueryClientProvider client={queryClient}>
       <UserContextProvider>

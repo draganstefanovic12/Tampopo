@@ -13,6 +13,7 @@ import {
 
 type UserContextProps = {
   user: User | undefined;
+  auth: string | undefined;
   setAuth: Dispatch<SetStateAction<string | undefined>>;
 };
 
@@ -44,6 +45,7 @@ export const UserContextProvider = ({ children }: ContextChildren) => {
 
       if (currentAuth) {
         const refreshedToken = await refreshAccessToken(currentAuth.refresh_token);
+        console.log(refreshedToken);
 
         localStorage.setItem("list_auth", JSON.stringify(refreshedToken));
         refreshedToken && setAuth(refreshedToken.access_token);
@@ -51,5 +53,5 @@ export const UserContextProvider = ({ children }: ContextChildren) => {
     })();
   }, []);
 
-  return <UserContext.Provider value={{ user, setAuth }}>{children}</UserContext.Provider>;
+  return <UserContext.Provider value={{ user, auth, setAuth }}>{children}</UserContext.Provider>;
 };

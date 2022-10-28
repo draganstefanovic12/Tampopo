@@ -38,12 +38,14 @@ const Manga: NextPage<MangaChapter> = (props: MangaChapter) => {
       setUpdatingChapter(true);
     },
     onSuccess: () => {
+      queryClient.invalidateQueries("user");
+
       setUpdatingChapter(false);
       setSuccessfullUpdate(true);
+
       setTimeout(() => {
         setSuccessfullUpdate(false);
       }, 1000);
-      queryClient.invalidateQueries("user");
     },
   });
 

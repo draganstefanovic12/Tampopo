@@ -49,6 +49,7 @@ export const refreshAccessToken = async (code: string) => {
 };
 
 export const handleFetchCurrentUser = async (token: string) => {
+  console.log("HEY");
   const query = `
   query {
     Viewer {
