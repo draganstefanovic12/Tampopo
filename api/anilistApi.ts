@@ -166,12 +166,13 @@ export const handleFetchSingleManga = async (id: string) => {
   return res.data;
 };
 
-//fix this tmr..
-export const handleUpdateChapter = async (
-  id: number | undefined,
-  progress: string | undefined,
-  token: string
-) => {
+type UpdatingChapter = {
+  id: number | undefined;
+  progress: string | undefined;
+  token: string;
+};
+
+export const handleUpdateChapter = async (update: UpdatingChapter) => {
   const query = `
   mutation($mediaId: Int, $status: MediaListStatus, $progress: Int) {
     SaveMediaListEntry(mediaId: $mediaId, status: $status, progress: $progress) {
@@ -182,13 +183,13 @@ export const handleUpdateChapter = async (
   `;
 
   const variables = {
-    mediaId: id,
-    progress: progress,
+    mediaId: update.id,
+    progress: update.progress,
   };
 
   const res = await anilistApi("/", {
     headers: {
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${update.token}`,
     },
     method: "POST",
     data: {
