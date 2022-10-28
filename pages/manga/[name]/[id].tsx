@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { handleFetchSingleManga, handleUpdateChapter } from "../../../api/anilistApi";
 import { AnilistManga, Manga as MangaInfo, Volumes } from "../../../features/manga/types/types";
+import { useMutation, useQueryClient } from "react-query";
 import { GetStaticPropsContext, NextPage } from "next";
 import {
   handleChapterChange,
@@ -25,8 +26,15 @@ const Manga: NextPage<MangaChapter> = (props: MangaChapter) => {
   const { user } = useUser();
   const { query } = useRouter();
   const [chapter, setChapter] = useState<Chapter | undefined>();
+  const queryClient = useQueryClient();
 
-  //fetches manga banner and basic info from ANILIST API
+  const mutateUser = useMutation(handleUpdateChapter, {
+    onSuccess() {
+      queryClient.invalidateQueries(["user"]);
+    },
+  });
+
+  //fetches manga banner and basic info from anilist
   const { data: mangaInfo } = useQuery(
     ["mangaInfo"],
     () => {
@@ -51,21 +59,29 @@ const Manga: NextPage<MangaChapter> = (props: MangaChapter) => {
   useEffect(() => {
     //sets the manga to current read chapter or the first one
     const checkUserProgress = () => {
-      CURRENT
+      CURRENT && CURRENT
         ? Number(CURRENT.progress) < props.chapters.length &&
           setChapter(props.chapters[Number(CURRENT.progress)])
         : setChapter(props.chapters[0]);
     };
 
     checkUserProgress();
-  }, [user]);
+  }, []);
 
   useEffect(() => {
-    const onScroll = async () => {
+    const onScroll = () => {
       if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
         const auth = JSON.parse(localStorage.getItem("list_auth")!);
+
         if (CURRENT && Number(chapter?.chapter) > Number(CURRENT.progress!)) {
-          await handleUpdateChapter(CURRENT.id, chapter?.chapter, auth.access_token);
+          const chapterUpdate = {
+            id: CURRENT.id,
+            progress: chapter?.chapter,
+            token: auth.access_token,
+          };
+          //mutates user to refetch data on chapter update
+          console.log("test");
+          mutateUser.mutate(chapterUpdate);
         }
       }
     };

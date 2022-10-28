@@ -1,5 +1,5 @@
-import { Dispatch, SetStateAction, useEffect } from "react";
 import { MangaChapter, Chapter } from "../../../pages/manga/[name]/[id]";
+import { Dispatch, SetStateAction } from "react";
 
 type PreviousNextProps = {
   props: MangaChapter;
@@ -17,10 +17,6 @@ const PreviousNextChapter = ({ props, setChapter, chapter }: PreviousNextProps) 
       (currChapter: Chapter | undefined) => props.chapters[Number(currChapter?.chapter) - 2]
     );
   };
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [handleNextChapter, handlePreviousChapter]);
 
   //doesnt display the button if on last chapter
   const checkIfLastChapter = props.chapters.at(-1)!.chapter === chapter?.chapter ? "hidden" : "";
