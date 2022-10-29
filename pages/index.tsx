@@ -31,13 +31,17 @@ const Home: NextPage<FetchedMangas> = (props: FetchedMangas) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Hero />
-      {auth && user ? (
-        <>
-          <MangasSection props={user!.list.current} header="Currently reading" />
-          <MangasSection props={user!.list.planning} header="Planning to read" />
-        </>
-      ) : (
-        <Spinner />
+      {auth && (
+        <div>
+          {user ? (
+            <>
+              <MangasSection props={user!.list.current} header="Currently reading" />
+              <MangasSection props={user!.list.planning} header="Planning to read" />
+            </>
+          ) : (
+            <Spinner />
+          )}
+        </div>
       )}
       <MangasSection props={props.manga.data.Page.media} header="Top rated" />
     </div>

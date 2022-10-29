@@ -33,8 +33,9 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
   const handleAuthAccessToken = async () => {
     //when authorization code gets sent back i fetch access_code and save it in localStorage
     const token = await getAccessToken(router.query.code as string);
+
     if (token) {
-      localStorage.setItem("list_auth", JSON.stringify(auth));
+      localStorage.setItem("list_auth", JSON.stringify(token));
       router.replace("/", "/");
       setAuth(token.access_token);
     }
