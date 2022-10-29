@@ -1,7 +1,8 @@
 import { User } from "../types/types";
+import { useAuth } from "../../auth/context/AuthContext";
 import { useQuery } from "react-query";
 import { handleFetchCurrentUser } from "../../../api/anilistApi";
-import { createContext, ReactNode, useContext, useEffect, useState } from "react";
+import { createContext, ReactNode, useContext } from "react";
 
 type UserContextProps = {
   user: User | undefined;
@@ -18,21 +19,20 @@ export const useUser = () => {
 };
 
 export const UserContextProvider = ({ children }: ContextChildren) => {
-  //using auth state like this because the app doesnt mount right away
-  const [auth, setAuth] = useState<string>();
-  //fetches user info on page load
+  //using state for auth tokens because the app needs to mount first to access local storage
+  const { auth } = useAuth();
+  //fetching user info only if auth state exists
   const { data: user } = useQuery(
     ["user"],
     () => {
       return handleFetchCurrentUser(auth!);
     },
-    { enabled: !!auth, refetchInterval: 10000 }
+    {
+      enabled: !!auth,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+    }
   );
-
-  useEffect(() => {
-    const auth = JSON.parse(localStorage.getItem("list_auth")!).access_token;
-    setAuth(auth);
-  }, []);
 
   return <UserContext.Provider value={{ user }}>{children}</UserContext.Provider>;
 };
