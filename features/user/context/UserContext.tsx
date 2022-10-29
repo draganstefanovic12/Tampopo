@@ -1,20 +1,11 @@
 import { User } from "../types/types";
+import { useAuth } from "../../auth/context/AuthContext";
 import { useQuery } from "react-query";
-import { handleFetchCurrentUser, refreshAccessToken } from "../../../api/anilistApi";
-import {
-  createContext,
-  Dispatch,
-  ReactNode,
-  SetStateAction,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { handleFetchCurrentUser } from "../../../api/anilistApi";
+import { createContext, ReactNode, useContext } from "react";
 
 type UserContextProps = {
   user: User | undefined;
-  auth: string | undefined;
-  setAuth: Dispatch<SetStateAction<string | undefined>>;
 };
 
 type ContextChildren = {
@@ -28,9 +19,9 @@ export const useUser = () => {
 };
 
 export const UserContextProvider = ({ children }: ContextChildren) => {
-  //using auth state like this because the app doesnt mount right away
-  const [auth, setAuth] = useState<string>();
-  //fetches user info on page load if auth exists
+  //using state for auth tokens because the app needs to mount first to access local storage
+  const { auth } = useAuth();
+  //fetching user info only if auth state exists
   const { data: user } = useQuery(
     ["user"],
     () => {
@@ -39,19 +30,5 @@ export const UserContextProvider = ({ children }: ContextChildren) => {
     { enabled: !!auth, refetchOnMount: false, refetchOnWindowFocus: false }
   );
 
-  useEffect(() => {
-    (async () => {
-      const currentAuth = JSON.parse(localStorage.getItem("list_auth")!);
-
-      if (currentAuth) {
-        const refreshedToken = await refreshAccessToken(currentAuth.refresh_token);
-        console.log(refreshedToken);
-
-        localStorage.setItem("list_auth", JSON.stringify(refreshedToken));
-        refreshedToken && setAuth(refreshedToken.access_token);
-      }
-    })();
-  }, []);
-
-  return <UserContext.Provider value={{ user, auth, setAuth }}>{children}</UserContext.Provider>;
+  return <UserContext.Provider value={{ user }}>{children}</UserContext.Provider>;
 };

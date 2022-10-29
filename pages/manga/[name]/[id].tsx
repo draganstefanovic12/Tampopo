@@ -85,6 +85,8 @@ const Manga: NextPage<MangaChapter> = (props: MangaChapter) => {
         if (CURRENT_MANGA && Number(chapter?.chapter) > Number(CURRENT_MANGA.progress!)) {
           mutateUser.mutate(chapterUpdate);
         }
+        //removing event listener here to stop multiple requests
+        window.removeEventListener("scroll", onScroll);
       }
     };
 
@@ -107,32 +109,33 @@ const Manga: NextPage<MangaChapter> = (props: MangaChapter) => {
 export const getServerSideProps = async (context: GetStaticPropsContext) => {
   const { id, name } = context.params! as { id: string; name: string };
 
-  //fetches 10 mangas via mangadex api
+  //fetching mangas via mangadex API
   const handleManga = await handleMangaInfo(name);
 
-  //filters the 10 results to find the id matching the anilist manga id
+  //filtering results to check if the manga with anilist ID exists
+  //to know that I get the right manga to update
   const findAnilistId = handleManga.data.filter(
     (manga: MangaInfo) => manga.attributes.links && manga.attributes.links.al === id
   );
 
-  //sends out a 404 not found if chapters are not available for the manga
+  //sending out 404 not found if theres no results
   if (handleManga.data.length === 0 || findAnilistId.length === 0) {
     return {
       notFound: true,
     };
   }
 
-  //fetches all volumes and chapters from mangadex
+  //fetching mangas and volumes
   const handleChapters = await handleMangaChapters(findAnilistId[0] && findAnilistId[0].id);
 
-  //loops through object keys of volumes and returns them in an array
+  //looping through object keys of volumes to return them in an array
+  //so i can get all chapters in one array
   const volumes = Object.keys(handleChapters.volumes).map((key: string) => {
     return handleChapters.volumes[key];
   });
 
-  //maps through volumes array
+  //maps through volumes array and returns an array of chapters arrays
   const handleVolumes: MangaInfo[][] = volumes.map((volumes: Volumes) => {
-    //maps through object keys of all chapters to return chapters array
     return Object.keys(volumes.chapters)
       .map((chapter) => volumes.chapters[chapter])
       .filter((chapter) => !chapter.chapter.includes("."));
