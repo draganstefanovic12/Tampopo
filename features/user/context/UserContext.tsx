@@ -2,7 +2,7 @@ import { User } from "../types/types";
 import { useAuth } from "../../auth/context/AuthContext";
 import { useQuery } from "react-query";
 import { handleFetchCurrentUser } from "../../../api/anilistApi";
-import { createContext, ReactNode, useContext } from "react";
+import { createContext, ReactNode, useContext, useEffect } from "react";
 
 type UserContextProps = {
   user: User | undefined;
@@ -27,11 +27,7 @@ export const UserContextProvider = ({ children }: ContextChildren) => {
     () => {
       return handleFetchCurrentUser(auth!);
     },
-    {
-      enabled: !!auth,
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-    }
+    { enabled: !!auth, refetchOnMount: false, refetchOnWindowFocus: false }
   );
 
   return <UserContext.Provider value={{ user }}>{children}</UserContext.Provider>;
