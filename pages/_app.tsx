@@ -1,9 +1,9 @@
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import { UserContextProvider } from "../features/user/context/UserContext";
+import { AuthContextProvider } from "../features/auth/context/AuthContext";
 import { QueryClient, QueryClientProvider } from "react-query";
 import Layout from "../components/Layout";
-import { AuthContextProvider } from "../features/auth/context/AuthContext";
 
 const queryClient = new QueryClient();
 function MyApp({ Component, pageProps }: AppProps) {

@@ -55,13 +55,13 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
       //since the token only lasts 1 hour
       handleRefreshToken(currentAuth);
       //i run the function once without the delay
-      const interval = setInterval(() => {
+      const runsEveryHour = setInterval(() => {
         handleRefreshToken(currentAuth);
       }, 1000 * 60 * 60);
 
       return () => {
         //returns clear interval so it doesnt cause rerenders
-        clearInterval(interval);
+        clearInterval(runsEveryHour);
       };
     }
 

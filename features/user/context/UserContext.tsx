@@ -27,7 +27,11 @@ export const UserContextProvider = ({ children }: ContextChildren) => {
     () => {
       return handleFetchCurrentUser(auth!);
     },
-    { enabled: !!auth, refetchOnMount: false, refetchOnWindowFocus: false }
+    {
+      enabled: !!auth,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+    }
   );
 
   return <UserContext.Provider value={{ user }}>{children}</UserContext.Provider>;
