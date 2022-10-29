@@ -14,6 +14,7 @@ import {
 type AuthContext = {
   auth: string | undefined;
   setAuth: Dispatch<SetStateAction<string | undefined>>;
+  handleClearToken: () => void;
 };
 
 type AuthContextProviderProps = {
@@ -35,7 +36,7 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
     const token = await getAccessToken(router.query.code as string);
 
     if (token) {
-      localStorage.setItem("list_auth", JSON.stringify(token));
+      localStorage.setItem("mangaAuth", JSON.stringify(token));
       router.replace("/", "/");
       setAuth(token.access_token);
     }
@@ -44,12 +45,17 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
   const handleRefreshToken = async (currentAuth: Auth) => {
     const refreshedToken = await refreshAccessToken(currentAuth.refresh_token);
 
-    localStorage.setItem("list_auth", JSON.stringify(refreshedToken));
+    localStorage.setItem("mangaAuth", JSON.stringify(refreshedToken));
     refreshedToken && setAuth(refreshedToken.access_token);
   };
 
+  const handleClearToken = () => {
+    localStorage.removeItem("mangaAuth");
+    location.reload();
+  };
+
   useEffect(() => {
-    const currentAuth = JSON.parse(localStorage.getItem("list_auth")!);
+    const currentAuth = JSON.parse(localStorage.getItem("mangaAuth")!);
 
     if (currentAuth) {
       //refreshes access token every 1 hour or on page load
@@ -71,5 +77,9 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
     !currentAuth && router.query.code && handleAuthAccessToken();
   }, []);
 
-  return <AuthContext.Provider value={{ auth, setAuth }}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={{ auth, setAuth, handleClearToken }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };

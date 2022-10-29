@@ -8,7 +8,7 @@ const Layout = ({ children }: LayoutProps) => {
   return (
     <>
       <Nav />
-      <main className="bg-primary min-h-screen">{children}</main>
+      <main className="bg-primary min-h-screen w-max md:w-auto">{children}</main>
     </>
   );
 };

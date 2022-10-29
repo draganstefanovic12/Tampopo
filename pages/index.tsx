@@ -32,7 +32,7 @@ const Home: NextPage<FetchedMangas> = (props: FetchedMangas) => {
       </Head>
       <Hero />
       {auth && (
-        <div>
+        <>
           {user ? (
             <>
               <MangasSection props={user!.list.current} header="Currently reading" />
@@ -41,7 +41,7 @@ const Home: NextPage<FetchedMangas> = (props: FetchedMangas) => {
           ) : (
             <Spinner />
           )}
-        </div>
+        </>
       )}
       <MangasSection props={props.manga.data.Page.media} header="Top rated" />
     </div>

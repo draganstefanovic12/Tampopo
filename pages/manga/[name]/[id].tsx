@@ -72,7 +72,7 @@ const Manga: NextPage<MangaChapter> = (props: MangaChapter) => {
         const chapterUpdate = {
           id: query.id,
           progress: chapter?.chapter,
-          token: auth.access_token,
+          token: auth,
         };
 
         //these 2 conditions check if the manga is not read before
@@ -95,11 +95,11 @@ const Manga: NextPage<MangaChapter> = (props: MangaChapter) => {
   }, [chapter]);
 
   return (
-    <section className="flex flex-col items-ce">
+    <section className="flex flex-col">
       <Head>{CURRENT_MANGA && <title>{CURRENT_MANGA.title?.romaji}</title>}</Head>
       <Chapters CURRENT_CHAPTER={CURRENT_MANGA} props={props} setChapter={setChapter} />
       {data && <ChapterImages chapter={data.chapter} />}
-      <PreviousNextChapter props={props} setChapter={setChapter} chapter={chapter} />
+      {data && <PreviousNextChapter props={props} setChapter={setChapter} chapter={chapter} />}
       {successfullUpdate && <SuccessSnackbar />}
       {updatingChapter && <UpdatingSnackbar />}
     </section>
