@@ -5,9 +5,11 @@ describe("clicks on a manga and checks for info and chapter images", () => {
     cy.contains("Berserk").click();
 
     //checks if it contains the chapter number
-    cy.get("select").should("be.visible").select("2");
+    cy.get("[cy-data='chapter-div']");
 
     //checks for the image alt
     cy.get('[alt="manga-panel"]');
   });
 });
+
+export {};

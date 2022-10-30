@@ -26,7 +26,7 @@ const Chapters = ({ props, setChapter, CURRENT_CHAPTER }: ChapterSelectionProps)
   }, []);
 
   return (
-    <div className="flex flex-col-reverse w-20 rounded absolute">
+    <div cy-data="chapter-div" className="flex flex-col-reverse w-20 rounded absolute">
       {props.chapters.map((chapter, i) => (
         <button key={i} onClick={handleChangeChapter} value={i}>
           {i + 1}
