@@ -1,3 +1,4 @@
+import { useAuth } from "../../../features/auth/context/AuthContext";
 import { useUser } from "../../../features/user/context/UserContext";
 import { useQuery } from "react-query";
 import { useRouter } from "next/router";
@@ -27,6 +28,7 @@ export type Chapter = {
 
 const Manga: NextPage<MangaChapter> = (props: MangaChapter) => {
   const { user } = useUser();
+  const { auth } = useAuth();
   const { query } = useRouter();
   const queryClient = useQueryClient();
   const [chapter, setChapter] = useState<Chapter | undefined>();
@@ -67,12 +69,10 @@ const Manga: NextPage<MangaChapter> = (props: MangaChapter) => {
     const onScroll = () => {
       //checks if a user scrolled all the way down
       if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
-        const auth = JSON.parse(localStorage.getItem("list_auth")!);
-
         const chapterUpdate = {
           id: query.id,
           progress: chapter?.chapter,
-          token: auth,
+          token: auth!,
         };
 
         //these 2 conditions check if the manga is not read before

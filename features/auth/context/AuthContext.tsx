@@ -63,7 +63,8 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
       handleRefreshToken(currentAuth);
       //i run the function once without the delay
       const runsEveryHour = setInterval(() => {
-        handleRefreshToken(currentAuth);
+        const updatedRefreshToken = JSON.parse(localStorage.getItem("mangaAuth")!);
+        handleRefreshToken(updatedRefreshToken);
       }, 1000 * 60 * 60);
 
       return () => {

@@ -11,7 +11,7 @@ const MangasSection = ({ props, header }: MangaSectionProps) => {
   return (
     <section className="py-5">
       <h1 className="text-2xl">{header}</h1>
-      <ul className="flex flex-wrap gap-4">
+      <ul className="flex flex-wrap gap-2">
         {props.map((manga) => (
           <li
             className="h-64 w-44 shadow-lg cursor-pointer bg-primary hover:bg-[#373845] transition-transform relative hover:scale-105 overflow-hidden"

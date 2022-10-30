@@ -1,3 +1,5 @@
+import { useRouter } from "next/router";
+import Footer from "../Footer";
 import Nav from "../Nav";
 
 type LayoutProps = {
@@ -5,10 +7,12 @@ type LayoutProps = {
 };
 
 const Layout = ({ children }: LayoutProps) => {
+  const { query } = useRouter();
   return (
     <>
       <Nav />
-      <main className="bg-primary min-h-screen w-max md:w-auto">{children}</main>
+      <main className="bg-primary min-h-screen w-full lg:w-auto">{children}</main>
+      {!query.id && <Footer />}
     </>
   );
 };
