@@ -4,8 +4,8 @@ const nextConfig = {
   swcMinify: true,
   env: {
     grantType: "authorization_code",
-    clientId: 9875,
-    clientSecret: "G0rVHCB3BJ22OlzMwGCyDm9y6E7lSxhpUIsUnsHx",
+    clientId: 9923,
+    clientSecret: "QaBd9YgsrcQUREZXcyhKeZZ3tIQk6gazg4qf8jsS",
     redirectURI: "http://localhost:3000",
   },
 };
