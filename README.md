@@ -22,3 +22,4 @@ Technologies used:
 - React Query
 - MangaDEX API (REST)
 - Anilist API (GraphQL)
+- Cypress
