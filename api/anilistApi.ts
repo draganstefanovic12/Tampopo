@@ -136,6 +136,42 @@ export const handleFetchCurrentMangas = async (id: string, token: string) => {
   return response.data;
 };
 
+export const handleSearchMangas = async (search: string | undefined) => {
+  const query = `
+        query ($page: Int, $perPage: Int, $search: String) {
+  Page(page: $page, perPage: $perPage) {
+    pageInfo {
+      total
+      perPage
+    }
+    media(search: $search, type: MANGA, sort: FAVOURITES_DESC) {
+      id
+      title {
+        romaji
+        english
+        native
+      }
+      coverImage {
+        medium
+      }
+    }
+  }
+}
+`;
+
+  const variables = {
+    page: 1,
+    perPage: 20,
+    search: search,
+  };
+
+  const response = await anilistApi.post("/", {
+    query: query,
+    variables: variables,
+  });
+  return response.data;
+};
+
 export const handleFetchSingleManga = async (id: string) => {
   const query = `
   query ($page: Int, $perPage: Int, $id: Int) {

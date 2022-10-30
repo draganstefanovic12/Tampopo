@@ -1,3 +1,4 @@
+import { useAuth } from "../../../features/auth/context/AuthContext";
 import { useUser } from "../../../features/user/context/UserContext";
 import { useQuery } from "react-query";
 import { useRouter } from "next/router";
@@ -17,7 +18,6 @@ import ChapterImages from "../../../features/manga/components/ChapterImages";
 import SuccessSnackbar from "../../../components/Snackbar/SuccessSnackbar";
 import UpdatingSnackbar from "../../../components/Snackbar/UpdatingSnackbar";
 import PreviousNextChapter from "../../../features/manga/components/PreviousNextChapter";
-import { useAuth } from "../../../features/auth/context/AuthContext";
 
 export type MangaChapter = { chapters: Chapter[] };
 
