@@ -5,3 +5,5 @@ describe("tesing mangas", () => {
     cy.contains("Berserk");
   });
 });
+
+export {};

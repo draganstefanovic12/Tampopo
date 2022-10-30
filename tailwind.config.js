@@ -14,6 +14,10 @@ module.exports = {
         fontMain: "var(--font-main)",
         fontGrey: "var(--font-secondary)",
       },
+      backgroundImage: {
+        anilist: "url(`/public/anilist.svg`)",
+        mangadex: "url(`/public/mangadex.jpg`)",
+      },
     },
   },
   plugins: [

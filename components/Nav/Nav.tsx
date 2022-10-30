@@ -7,6 +7,7 @@ import Search from "../../features/search/components/Search";
 
 const Nav = () => {
   const { user } = useUser();
+  console.log(user);
   const { handleClearToken } = useAuth();
 
   const aniListLink = `https://anilist.co/api/v2/oauth/authorize?client_id=${process.env.clientId}&redirect_uri=${process.env.redirectURI}&response_type=code`;
@@ -18,6 +19,7 @@ const Nav = () => {
         <Search />
         {user ? (
           <div className="flex gap-2 align-middle">
+            <img src={user.avatar} alt="avatar" className="h-6 w-6 object-cover rounded-full" />
             <span className="pointer-events-none">{user.name}</span>
             <Image
               onClick={handleClearToken}

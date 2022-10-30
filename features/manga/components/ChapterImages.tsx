@@ -8,6 +8,7 @@ const ChapterImages = ({ chapter }: ChapterImagesProps) => {
     <ul className="flex flex-col w-2/4 gap-10 self-center items-center">
       {chapter.data.map((imgSource: string) => (
         <Image
+          cy-data="manga-panel"
           loader={() => `https://uploads.mangadex.org/data/${chapter.hash}/${imgSource}`}
           key={imgSource}
           src={`https://uploads.mangadex.org/data/${chapter.hash}/${imgSource}`}
