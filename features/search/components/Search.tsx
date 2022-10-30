@@ -54,6 +54,7 @@ const Search = () => {
         onClick={handleOpen}
         className="bg-gray-200 rounded px-2"
         onChange={handleValue}
+        placeholder="Search..."
       />
       {isOpen && (
         <ul className="absolute z-50 bg-white w-60">
